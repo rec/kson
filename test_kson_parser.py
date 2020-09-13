@@ -23,13 +23,13 @@ class KsonParserTest(unittest.TestCase):
 
     def test_comma_list(self):
         for e in '[1,]', '[,1]', '[,1,]':
-            parse(e)
+            assert parse(e) == [1]
         with self.assertRaises(TypeError):
             assert parse('[,]' == [])
 
     def test_comma_object(self):
         for e in '{"one": 1,}', '{,"one": 1}', '{,"one": 1,}':
-            parse(e)
+            assert parse(e) == {'one': 1}
         with self.assertRaises(TypeError):
             assert parse('{,}' == {})
 
@@ -39,9 +39,7 @@ class KsonParserTest(unittest.TestCase):
             parse(test_json)
 
     def test_single_quote(self):
-        test_json = "'hello'"
-        with self.assertRaises(lark.UnexpectedCharacters):
-            parse(test_json)
+        assert parse("'hello'") == 'hello'
 
     def test_binary(self):
         test_json = '`marker`binary`marker`'

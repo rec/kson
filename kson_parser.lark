@@ -11,10 +11,12 @@
 array  : "[" [ ","? value ("," value)* ","? ] "]"
 object : "{" [ ","? pair ("," pair)* ","? ] "}"
 pair   : string ":" value
+string : ESCAPED_STRING_SINGLE | ESCAPED_STRING_DOUBLE
 
-string : ESCAPED_STRING
+ESCAPED_STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
+ESCAPED_STRING_SINGLE : "'" _STRING_ESC_INNER "'"
 
-%import common.ESCAPED_STRING
+%import common._STRING_ESC_INNER
 %import common.SIGNED_NUMBER
 %import common.WS
 
