@@ -3,7 +3,7 @@ import lark
 import transformer
 
 
-def make_parser(file):
+def make_lark(file):
     return lark.Lark(
         Path(file).read_text(),
         transformer=transformer.Transformer(),
@@ -11,4 +11,8 @@ def make_parser(file):
         lexer='standard',
         propagate_positions=False,
         maybe_placeholders=False,
-    ).parse
+    )
+
+
+def make_parser(file):
+    return make_lark(file).parse

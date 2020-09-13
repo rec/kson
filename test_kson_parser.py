@@ -46,6 +46,8 @@ class KsonParserTest(unittest.TestCase):
             parse(test_json)
 
     def test_streaming(self):
+        test_json = '"hello"'
+        assert parse(test_json) == "hello"
+
         test_json = '"hello" "hello"'
-        with self.assertRaises(lark.UnexpectedToken):
-            parse(test_json)
+        assert parse(test_json).children == ["hello", "hello"]
