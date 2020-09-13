@@ -6,7 +6,7 @@ import unittest
 parse = parser.make_parser('kson_parser.lark')
 
 
-class JsonParserTest(unittest.TestCase):
+class KsonParserTest(unittest.TestCase):
     def test_original(self):
         test_json = """
             {
