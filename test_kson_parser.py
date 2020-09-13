@@ -35,8 +35,7 @@ class KsonParserTest(unittest.TestCase):
 
     def test_comment(self):
         test_json = '{"hello": 1 # comment\n}'
-        with self.assertRaises(lark.UnexpectedCharacters):
-            parse(test_json)
+        assert parse(test_json) == {"hello": 1}
 
     def test_single_quote(self):
         assert parse("'hello'") == 'hello'

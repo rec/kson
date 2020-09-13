@@ -13,11 +13,15 @@ object : "{" [ ","? pair ("," pair)* ","? ] "}"
 pair   : string ":" value
 string : ESCAPED_STRING_SINGLE | ESCAPED_STRING_DOUBLE
 
+COMMENT: /#[^\n]*/
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+
+WS: /[ \t\f]/+
+%ignore WS
+%ignore _NEWLINE
+
 ESCAPED_STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
 ESCAPED_STRING_SINGLE : "'" _STRING_ESC_INNER "'"
 
 %import common._STRING_ESC_INNER
 %import common.SIGNED_NUMBER
-%import common.WS
-
-%ignore WS
