@@ -37,6 +37,11 @@ class Transformer(lark.Transformer):
     object = dict
     number = args(float)
 
-    null = lambda self, _: None
-    true = lambda self, _: True
-    false = lambda self, _: False
+    def null(self, _):
+        return None
+
+    def true(self, _):
+        return True
+
+    def false(self, _):
+        return False
