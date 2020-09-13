@@ -6,7 +6,7 @@ import unittest
 parse = parser.make_parser('kson_parser.lark')
 
 
-class KsonParserTest(unittest.TestCase):
+class JsonParserTest(unittest.TestCase):
     def test_original(self):
         test_json = """
             {
@@ -21,10 +21,17 @@ class KsonParserTest(unittest.TestCase):
         j = parse(test_json)
         assert j == json.loads(test_json)
 
-    def test_comma(self):
+    def test_comma_list(self):
         for e in '[1,]', '[,1]', '[,1,]':
-            with self.assertRaises(lark.UnexpectedToken):
-                parse(e)
+            parse(e)
+        with self.assertRaises(TypeError):
+            assert parse('[,]' == [])
+
+    def test_comma_object(self):
+        for e in '{"one": 1,}', '{,"one": 1}', '{,"one": 1,}':
+            parse(e)
+        with self.assertRaises(TypeError):
+            assert parse('{,}' == {})
 
     def test_comment(self):
         test_json = '{"hello": 1 # comment\n}'
