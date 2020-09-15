@@ -1,6 +1,6 @@
 from pathlib import Path
 import lark
-import transformer
+from . import transformer
 
 
 def make_lark(file):

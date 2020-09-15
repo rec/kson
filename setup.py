@@ -22,11 +22,10 @@ def _version():
 
 
 if __name__ == '__main__':
+    VERSION = _version()
     if False:
-        VERSION = _version()
         REQUIREMENTS = Path('requirements.txt').read_text().splitlines()
     else:
-        VERSION = '0.8.0'
         REQUIREMENTS = []
 
     setup(
