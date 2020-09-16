@@ -3,10 +3,11 @@ import lark
 args = lark.v_args(inline=True)
 
 
-class Transformer(lark.Transformer):
+class JsonTransformer(lark.Transformer):
     @args
     def string(self, s):
-        return s[1:-1].replace('\\"', '"')
+        sep = s[0]
+        return s[1:-1].replace('\\' + sep, sep)
 
     array = list
     pair = tuple
@@ -21,3 +22,7 @@ class Transformer(lark.Transformer):
 
     def true(self, _):
         return True
+
+
+class KsonTransformer(JsonTransformer):
+    pass

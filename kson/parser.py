@@ -1,12 +1,11 @@
 from pathlib import Path
 import lark
-from . import transformer
 
 
-def make_lark(file):
+def make_lark(file, transformer):
     return lark.Lark(
         Path(file).read_text(),
-        transformer=transformer.Transformer(),
+        transformer=transformer,
         parser='lalr',
         lexer='standard',
         propagate_positions=False,
@@ -14,5 +13,5 @@ def make_lark(file):
     )
 
 
-def make_parser(file):
-    return make_lark(file).parse
+def make_parser(file, transformer):
+    return make_lark(file, transformer).parse

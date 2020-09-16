@@ -1,9 +1,10 @@
 from kson import parser
+from kson.transformer import KsonTransformer
 import json
 import lark
 import unittest
 
-parse = parser.make_parser('grammar/kson.lark')
+parse = parser.make_parser('grammar/kson.lark', KsonTransformer())
 
 
 class KsonParserTest(unittest.TestCase):
@@ -39,6 +40,14 @@ class KsonParserTest(unittest.TestCase):
 
     def test_single_quote(self):
         assert parse("'hello'") == 'hello'
+
+    def test_single_quote_backquoted(self):
+        assert parse(r"'he\'llo'") == 'he\'llo'
+        assert parse(r"'he\"llo'") == r'he\"llo'
+
+    def test_double_quote_backquoted(self):
+        assert parse(r'"he\'llo"') == r"he\'llo"
+        assert parse(r'"he\"llo"') == "he\"llo"
 
     def test_binary(self):
         test_json = '`marker`binary`marker`'

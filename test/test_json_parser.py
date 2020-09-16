@@ -1,9 +1,10 @@
 from kson import parser
+from kson.transformer import JsonTransformer
 import json
 import lark
 import unittest
 
-parse = parser.make_parser('grammar/json.lark')
+parse = parser.make_parser('grammar/json.lark', JsonTransformer())
 
 
 class JsonParserTest(unittest.TestCase):
