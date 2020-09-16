@@ -1,1 +1,1 @@
-lark-parser
+git+git://github.com/lark-parser/lark@master#egg=lark

@@ -1,22 +1,14 @@
+from pathlib import Path
 import lark
-import sys
+import transformer
 
 
-def make_parser(module):
+def make_parser(file):
     return lark.Lark(
-        module.GRAMMAR,
-        transformer=module.Transformer(),
+        Path(file).read_text(),
+        transformer=transformer.Transformer(),
         parser='lalr',
         lexer='standard',
         propagate_positions=False,
         maybe_placeholders=False,
     ).parse
-
-
-if __name__ == '__main__':
-    import json_parser
-
-    parse = make_parser(json_parser)
-
-    with open(sys.argv[1]) as f:
-        print(parse(f.read()))
