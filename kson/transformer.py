@@ -6,7 +6,7 @@ args = lark.v_args(inline=True)
 class Transformer(lark.Transformer):
     @args
     def string(self, s):
-        return s[1:-1].replace('\\"', '"')
+        return s[1:-1].replace('\\' + s[0], s[0])
 
     array = list
     pair = tuple
