@@ -21,6 +21,13 @@ class JsonParserTest(unittest.TestCase):
         j = parse(test_json)
         assert j == json.loads(test_json)
 
+    def test_quote_backquoted(self):
+        assert parse(r'"he\"llo"') == 'he"llo'
+        assert parse(r'"he\\\"llo"') == 'he\\\\\"llo'
+        with self.assertRaises(lark.UnexpectedCharacters):
+            parse(r'"he\\"llo"') == "he\"llo"
+        assert parse(r'"he\\"') == r'he\\'
+
     def test_comma(self):
         for e in '[1,]', '[,1]', '[,1,]':
             with self.assertRaises(lark.UnexpectedToken):

@@ -12,7 +12,7 @@ DOUBLE_QUOTE_RE = re.compile(ODD_BACKSLASHES + '(")')
 class JsonTransformer(lark.Transformer):
     @args
     def string(self, s):
-        return s[1:-1].replace('\\' + s[0], s[0])
+        return DOUBLE_QUOTE_RE.sub(r'\1' + s[0], s[1:-1])
 
     array = list
     pair = tuple
@@ -30,4 +30,7 @@ class JsonTransformer(lark.Transformer):
 
 
 class KsonTransformer(JsonTransformer):
-    pass
+    @args
+    def string(self, s):
+        regex = QUOTE_RE if s[0] == "'" else DOUBLE_QUOTE_RE
+        return regex.sub(r'\1' + s[0], s[1:-1])
