@@ -1,9 +1,15 @@
 import lark
+import re
 
 args = lark.v_args(inline=True)
 
+ODD_BACKSLASHES = r'(?<!\\)(\\\\)*\\'
+RETURN_RE = re.compile(ODD_BACKSLASHES + '\n')
+QUOTE_RE = re.compile(ODD_BACKSLASHES + "(')")
+DOUBLE_QUOTE_RE = re.compile(ODD_BACKSLASHES + '(")')
 
-class Transformer(lark.Transformer):
+
+class JsonTransformer(lark.Transformer):
     @args
     def string(self, s):
         return s[1:-1].replace('\\' + s[0], s[0])
@@ -21,3 +27,7 @@ class Transformer(lark.Transformer):
 
     def true(self, _):
         return True
+
+
+class KsonTransformer(JsonTransformer):
+    pass

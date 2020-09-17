@@ -3,7 +3,7 @@ import json
 import lark
 import unittest
 
-parse = parser.make_parser('grammar/kson.lark')
+parse = parser.make_parser('grammar/kson.lark', True)
 
 
 class KsonParserTest(unittest.TestCase):
