@@ -52,3 +52,8 @@ class JsonParserTest(unittest.TestCase):
         test_json = '"hello" "hello"'
         with self.assertRaises(lark.UnexpectedToken):
             parse(test_json)
+
+    def test_end_of_line(self):
+        test_json = '{"long": "two\\\nparts"}'
+        with self.assertRaises(lark.UnexpectedCharacters):
+            parse(test_json)

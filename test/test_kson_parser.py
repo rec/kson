@@ -40,6 +40,11 @@ class KsonParserTest(unittest.TestCase):
     def test_single_quote(self):
         assert parse("'hello'") == 'hello'
 
+    def test_quote_backquoted(self):
+        assert parse(r'"he\"llo"') == 'he"llo'
+        assert parse(r'"he\\\"llo"') == 'he\\\\\"llo'
+        assert parse(r'"he\\"') == r'he\\'
+
     def test_single_quote_backquoted(self):
         assert parse(r"'he\'llo'") == 'he\'llo'
         assert parse(r"'he\"llo'") == r'he\"llo'
@@ -59,3 +64,8 @@ class KsonParserTest(unittest.TestCase):
 
         test_json = '"hello" "hello"'
         assert parse(test_json).children == ["hello", "hello"]
+
+    def test_end_of_line(self):
+        test_json = '{"long": "two\\\nparts"}'
+        with self.assertRaises(lark.UnexpectedCharacters):
+            parse(test_json)
