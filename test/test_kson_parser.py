@@ -65,7 +65,8 @@ class KsonParserTest(unittest.TestCase):
         test_json = '"hello" "hello"'
         assert parse(test_json).children == ["hello", "hello"]
 
-    def test_end_of_line(self):
+    def test_end_of_line_XXX(self):
+        # THIS SHOULD FAIL!
         test_json = '{"long": "two\\\nparts"}'
         with self.assertRaises(lark.UnexpectedCharacters):
             parse(test_json)
