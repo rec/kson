@@ -44,3 +44,14 @@ class KsonTransformer(JsonTransformer):
         assert s[1] in '"\''
         assert s[-1] == s[1]
         return base64.b85decode(s[2:-1])
+
+    def bstring(self, s):
+        s = s[0].value
+        if False:
+            for k in dir(s):
+                if not k.startswith('_'):
+                    print('-', k, getattr(s, k))
+        tsize = s.index(b'>')
+        if not s.endswith(b'</' + s[:tsize]):
+            raise ValueError('A bstring must end with its token')
+        return s[tsize + 1:-tsize - 2]

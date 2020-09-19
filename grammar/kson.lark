@@ -4,6 +4,7 @@
       | array
       | string
       | astring
+      | bstring
       | SIGNED_NUMBER      -> number
       | "true"             -> true
       | "false"            -> false
@@ -22,6 +23,7 @@ ASTRING_SINGLE : "a'" /.*?'/
 ASTRING_DOUBLE : "a\"" /.*?\"/
 
 astring : ASTRING_SINGLE | ASTRING_DOUBLE
+bstring : "<" /(?P<KSON_MARKER>.*?)>.*?<\/(?P=KSON_MARKER)/ ">"
 
 COMMENT: /#[^\n]*/
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
