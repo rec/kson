@@ -1,3 +1,4 @@
+import base64
 import lark
 import re
 
@@ -35,3 +36,11 @@ class KsonTransformer(JsonTransformer):
         regex = QUOTE_RE if s[0] == "'" else DOUBLE_QUOTE_RE
         s = regex.sub(r'\1' + s[0], s[1:-1])
         return RETURN_RE.sub(r'\1', s)
+
+    def astring(self, s):
+        s = s[0]
+        assert len(s) >= 3, '%s, %s' % (len(s), s)
+        assert s[0] == 'a'
+        assert s[1] in '"\''
+        assert s[-1] == s[1]
+        return base64.b85decode(s[2:-1])

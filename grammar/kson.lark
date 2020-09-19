@@ -3,6 +3,7 @@
 ?value: object
       | array
       | string
+      | astring
       | SIGNED_NUMBER      -> number
       | "true"             -> true
       | "false"            -> false
@@ -11,7 +12,16 @@
 array  : "[" [ ","? value ("," value)* ","? ] "]"
 object : "{" [ ","? pair ("," pair)* ","? ] "}"
 pair   : string ":" value
+
+ESCAPED_STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
+ESCAPED_STRING_SINGLE : "'" _STRING_ESC_INNER "'"
+
 string : ESCAPED_STRING_SINGLE | ESCAPED_STRING_DOUBLE
+
+ASTRING_SINGLE : "a'" /.*?'/
+ASTRING_DOUBLE : "a\"" /.*?\"/
+
+astring : ASTRING_SINGLE | ASTRING_DOUBLE
 
 COMMENT: /#[^\n]*/
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
@@ -20,8 +30,7 @@ WS: /[ \t\f]/+
 %ignore WS
 %ignore _NEWLINE
 
-ESCAPED_STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
-ESCAPED_STRING_SINGLE : "'" _STRING_ESC_INNER "'"
 
 %import common._STRING_ESC_INNER
+%import common._STRING_INNER
 %import common.SIGNED_NUMBER
