@@ -1,12 +1,18 @@
 from pathlib import Path
 import lark
 from . transformer import JsonTransformer, KsonTransformer
+from . grammar import json, kson
 
 UUID = '3b69df96-a44b-460b-9542-eaf9dd2a98a8'
+STANDALONE = False
 
 
 def make_lark(file, is_kson=False, **kwargs):
     transformer = KsonTransformer() if is_kson else JsonTransformer()
+
+    if STANDALONE and is_kson:
+        Lark = kson.Lark_StandAlone if is_kson else json.Lark_StandAlone
+        return Lark(file)
 
     return lark.Lark(
         Path(file).read_text(),
