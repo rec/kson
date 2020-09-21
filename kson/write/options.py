@@ -1,5 +1,11 @@
 from dataclasses import dataclass
 import os
+import uuid
+
+DEFAULT_MARKER = b'>'
+
+while b'>' in DEFAULT_MARKER:
+    DEFAULT_MARKER = uuid.uuid4().bytes
 
 
 @dataclass
@@ -40,14 +46,14 @@ class Options:
     record_end: str = os.linesep
     trailing_commas: bool = True
     double_quote: bool = False
-    binary_marker: str = None
+    binary_marker: bytes = DEFAULT_MARKER
 
     # These next parameters have the same meaning as in json.dump
     skipkeys: bool = False
-    ensure_ascii: bool = True,
+    ensure_ascii: bool = True
     check_circular: bool = True
     allow_nan: bool = True
     indent: object = None
-    separators: object = None,
+    separators: object = None
     default: object = None
     sort_keys: bool = False
