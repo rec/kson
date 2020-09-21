@@ -1,7 +1,7 @@
-import json
-import re
-import os
 import functools
+import json
+import os
+import re
 
 
 ESCAPE_SINGLE = re.compile(json.ESCAPE.replace('"', "'"))
@@ -12,23 +12,28 @@ del ESCAPE_DCT_SINGLE['"']
 
 
 def dumper(
-        fp, *,
-        skipkeys=False,
-        check_circular=True,
-        allow_nan=True,
-        indent=None,
-        default=None,
-        sort_keys=False,
-        record_end=os.linesep,
-        trailing_commas=True,
-        double_quotes=False,
-        binary_marker=None):
+    fp,
+    *,
+    skipkeys=False,
+    check_circular=True,
+    allow_nan=True,
+    indent=None,
+    default=None,
+    sort_keys=False,
+    record_end=os.linesep,
+    trailing_commas=True,
+    double_quotes=False,
+    binary_marker=None
+):
     if hasattr(fp, 'newlines'):
+
         def write(s):
             if not isinstance(s, str):
                 raise TypeError('Cannot write')
             fp.write(s)
+
     else:
+
         def write(s):
             if isinstance(s, str):
                 s = s.encode()
@@ -75,7 +80,8 @@ def dumper(
         if allow_nan:
             return text
         raise ValueError(
-            'Out of range float values are not KSON compliant: ' + repr(x))
+            'Out of range float values are not KSON compliant: ' + repr(x)
+        )
 
     @dump.register(list)
     @dump.register(dict)

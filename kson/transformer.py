@@ -54,4 +54,4 @@ class KsonTransformer(JsonTransformer):
         tsize = s.index(b'>')
         if not s.endswith(b'</' + s[:tsize]):
             raise ValueError('A bstring must end with its token')
-        return s[tsize + 1:-tsize - 2]
+        return s[tsize + 1 : -tsize - 2]

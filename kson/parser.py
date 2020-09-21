@@ -1,7 +1,7 @@
+from .grammar import json, kson
+from .transformer import JsonTransformer, KsonTransformer
 from pathlib import Path
 import lark
-from . transformer import JsonTransformer, KsonTransformer
-from . grammar import json, kson
 
 UUID = '3b69df96-a44b-460b-9542-eaf9dd2a98a8'
 STANDALONE = False
@@ -21,7 +21,8 @@ def make_lark(file, is_kson=False, **kwargs):
         lexer='standard',
         propagate_positions=False,
         maybe_placeholders=False,
-        **kwargs)
+        **kwargs
+    )
 
 
 def make_parser(file, is_kson=False, **kwargs):

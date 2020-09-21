@@ -39,6 +39,6 @@ if __name__ == '__main__':
         long_description=open('README.rst').read(),
         license='MIT',
         classifiers=_classifiers,
-        keywords=['JSON', 'data', 'serialization', ],
+        keywords=['JSON', 'data', 'serialization'],
         install_requires=REQUIREMENTS,
     )
