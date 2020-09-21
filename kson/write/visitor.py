@@ -7,7 +7,7 @@ class Visitor:
     def __init__(self, options):
         self.options = options
         self._visited = {}
-        self._quote = quote(options.double_quote)
+        self._quote = quote.DOUBLE if options.double_quote else quote.SINGLE
 
     def _visit(self, x):
         if self.options.check_circular:
@@ -44,11 +44,7 @@ class Visitor:
 
     @visit.register
     def _(self, x: str):
-        yield from self._quote(x)
-
-    @visit.register
-    def _(self, x: str):
-        yield from self._quote(x)
+        yield self._quote(x)
 
     @visit.register(bytes)
     @visit.register(bytearray)

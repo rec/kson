@@ -1,33 +1,46 @@
-import json
+from json import encoder
 import re
 
 
-def quote(double_quote):
-    return _DOUBLE if double_quote else _SINGLE
+def quoter(double_quote: bool, ensure_ascii: bool):
+    if double_quote:
+        return double_ascii if ensure_ascii else double
+    return single_ascii if ensure_ascii else single
 
 
-class _Double:
-    def __init__(self):
-        self.escape = json.ESCAPE
-        self.escape_dict = dict(json.ESCAPE_DCT)
-        self.quote = '"'
+ESCAPE = re.compile(encoder.ESCAPE.pattern.replace('"', "'"))
+ESCAPE_ASCII = re.compile(encoder.ESCAPE_ASCII.pattern.replace('"', "'"))
+ESCAPE_DCT = dict(encoder.ESCAPE_DCT)
+del ESCAPE_DCT['"']
+ESCAPE_DCT["'"] = "\\'"
 
-    def _replace(self, match):
-        return self.escape_dict[match.group(0)]
-
-    def __call__(self, x):
-        return self.quote, self.escape.sub(self._replace, x), self.quote
+double = encoder.encode_basestring
+double_ascii = encoder.encode_basestring_ascii
 
 
-class _Single(_Double):
-    def __init__(self):
-        super().__init__()
-        self.quote = '\''
-        self.escape = re.compile(self.escape.replace('"', "'"))
+def single(s):
+    def replace(match):
+        return ESCAPE_DCT[match.group(0)]
 
-        self.escape_dict["'"] = "\\'"
-        del self.escape_dict['"']
+    return "'" + ESCAPE.sub(replace, s) + "'"
 
 
-_SINGLE = _Single()
-_DOUBLE = _Double()
+def single_ascii(s):
+    """Return an ASCII-only KSON representation of a Python string
+    """
+    def replace(match):
+        s = match.group(0)
+        try:
+            return ESCAPE_DCT[s]
+        except KeyError:
+            n = ord(s)
+            if n < 0x10000:
+                return '\\u{0:04x}'.format(n)
+            else:
+                # surrogate pair
+                n -= 0x10000
+                s1 = 0xd800 | ((n >> 10) & 0x3ff)
+                s2 = 0xdc00 | (n & 0x3ff)
+                return '\\u{0:04x}\\u{1:04x}'.format(s1, s2)
+
+    return "'" + ESCAPE_ASCII.sub(replace, s) + "'"
