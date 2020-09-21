@@ -44,8 +44,10 @@ class Options:
 
     # These next parameters have the same meaning as in json.dump
     skipkeys: bool = False
+    ensure_ascii: bool = True,
     check_circular: bool = True
     allow_nan: bool = True
     indent: object = None
+    separators: object = None,
     default: object = None
     sort_keys: bool = False

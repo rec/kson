@@ -1,4 +1,8 @@
-def formatter(options, it):
-    indent = 0
+import base64
 
-    return indent
+
+def formatter(items, binary=False):
+    stack = []
+    for i in items:
+        pass
+    return stack, base64

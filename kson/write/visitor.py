@@ -1,16 +1,15 @@
 import functools
 import json
-from . import quote
 
 
 class Visitor:
-    def __init__(self, options):
-        self.options = options
-        self._visited = {}
-        self._quote = quote.DOUBLE if options.double_quote else quote.SINGLE
+    def __init__(self, check_circular, quote, sort_keys):
+        self._visited = {} if check_circular else None
+        self.quote = quote
+        self.sort_keys = sort_keys
 
     def _visit(self, x):
-        if self.options.check_circular:
+        if self._visited is not None:
             i = id(x)
             if i in self._visited:
                 raise ValueError('Circular reference detected')
@@ -44,7 +43,7 @@ class Visitor:
 
     @visit.register
     def _(self, x: str):
-        yield self._quote(x)
+        yield self.quote(x)
 
     @visit.register(bytes)
     @visit.register(bytearray)
@@ -59,8 +58,6 @@ class Visitor:
             if i:
                 yield ','
             yield from self.visit(item)
-        if not i and self.options.trailing_commas:
-            yield ','
         yield ']'
 
     @visit.register
@@ -68,15 +65,15 @@ class Visitor:
         self._visit(x)
         yield '{'
 
-        it = sorted(x.items()) if self.options.sort_keys else x.items()
-        for i, (k, v) in enumerate(it):
+        items = x.items()
+        if self.sort_keys:
+            items = sorted(items)
+        for i, (k, v) in enumerate(items):
             if i:
                 yield ','
             if not isinstance(k, str):
                 raise TypeError('Keys must be strings')
-            yield from self.visit(k)
+            yield self.quote(k)
             yield ':'
             yield from self.visit(v)
-        if not i and self.options.trailing_commas:
-            yield ','
         yield '}'

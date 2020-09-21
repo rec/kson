@@ -1,18 +1,18 @@
 from json import encoder
 import re
 
+ESCAPE = re.compile(encoder.ESCAPE.pattern.replace('"', "'"))
+ESCAPE_ASCII = re.compile(encoder.ESCAPE_ASCII.pattern.replace('"', "'"))
+ESCAPE_DCT = dict(encoder.ESCAPE_DCT)
+del ESCAPE_DCT['"']
+ESCAPE_DCT["'"] = "\\'"
+
 
 def quoter(double_quote: bool, ensure_ascii: bool):
     if double_quote:
         return double_ascii if ensure_ascii else double
     return single_ascii if ensure_ascii else single
 
-
-ESCAPE = re.compile(encoder.ESCAPE.pattern.replace('"', "'"))
-ESCAPE_ASCII = re.compile(encoder.ESCAPE_ASCII.pattern.replace('"', "'"))
-ESCAPE_DCT = dict(encoder.ESCAPE_DCT)
-del ESCAPE_DCT['"']
-ESCAPE_DCT["'"] = "\\'"
 
 double = encoder.encode_basestring
 double_ascii = encoder.encode_basestring_ascii

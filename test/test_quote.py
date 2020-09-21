@@ -1,58 +1,68 @@
-from kson.write import quote
+from kson.write.quote import single
+from kson.write.quote import single_ascii
+from kson.write.quote import double
+from kson.write.quote import double_ascii
+from kson.write.quote import quoter
+from kson.write.unquote import unquote
 import unittest
+
+
+def round_trip(quoter, raw, quoted):
+    assert quoter(raw) == quoted
+    assert unquote(quoted) == raw
 
 
 class QuoteTest(unittest.TestCase):
     def test_empty(self):
-        assert quote.single('') == "''"
-        assert quote.single_ascii('') == "''"
-        assert quote.double('') == '""'
-        assert quote.double_ascii('') == '""'
+        round_trip(single, '', "''")
+        round_trip(single_ascii, '', "''")
+        round_trip(double, '', '""')
+        round_trip(double_ascii, '', '""')
 
     def test_single(self):
-        assert quote.single(' ') == "' '"
-        assert quote.single_ascii(' ') == "' '"
-        assert quote.double(' ') == '" "'
-        assert quote.double_ascii(' ') == '" "'
+        round_trip(single, ' ', "' '")
+        round_trip(single_ascii, ' ', "' '")
+        round_trip(double, ' ', '" "')
+        round_trip(double_ascii, ' ', '" "')
 
     def test_quote(self):
-        assert quote.single("'") == "'\\''"
-        assert quote.single_ascii("'") == "'\\''"
-        assert quote.double("'") == '"\'"'
-        assert quote.double_ascii("'") == '"\'"'
+        round_trip(single, "'", "'\\''")
+        round_trip(single_ascii, "'", "'\\''")
+        round_trip(double, "'", '"\'"')
+        round_trip(double_ascii, "'", '"\'"')
 
     def test_quote2(self):
-        assert quote.single('"') == "'\"'"
-        assert quote.single_ascii('"') == "'\"'"
-        assert quote.double('"') == '"\\""'
-        assert quote.double_ascii('"') == '"\\""'
+        round_trip(single, '"', "'\"'")
+        round_trip(single_ascii, '"', "'\"'")
+        round_trip(double, '"', '"\\""')
+        round_trip(double_ascii, '"', '"\\""')
 
     def test_backslashes(self):
-        assert quote.single('\n') == "'\\n'"
-        assert quote.single_ascii('\n') == "'\\n'"
-        assert quote.double('\n') == '"\\n"'
-        assert quote.double_ascii('\n') == '"\\n"'
+        round_trip(single, '\n', "'\\n'")
+        round_trip(single_ascii, '\n', "'\\n'")
+        round_trip(double, '\n', '"\\n"')
+        round_trip(double_ascii, '\n', '"\\n"')
 
     def test_more_backslashes(self):
-        assert quote.single('\\n') == "'\\\\n'"
-        assert quote.double('\\n') == '"\\\\n"'
-        assert quote.single('\\\n') == "'\\\\\\n'"
-        assert quote.double('\\\n') == '"\\\\\\n"'
-        assert quote.single('\\\\n') == "'\\\\\\\\n'"
-        assert quote.double('\\\\n') == '"\\\\\\\\n"'
-        assert quote.single('\\\\\n') == "'\\\\\\\\\\n'"
-        assert quote.double('\\\\\n') == '"\\\\\\\\\\n"'
-        assert quote.single('\\\\\n') == "'\\\\\\\\\\n'"
-        assert quote.double('\\\\\n') == '"\\\\\\\\\\n"'
+        round_trip(single, '\\n', "'\\\\n'")
+        round_trip(double, '\\n', '"\\\\n"')
+        round_trip(single, '\\\n', "'\\\\\\n'")
+        round_trip(double, '\\\n', '"\\\\\\n"')
+        round_trip(single, '\\\\n', "'\\\\\\\\n'")
+        round_trip(double, '\\\\n', '"\\\\\\\\n"')
+        round_trip(single, '\\\\\n', "'\\\\\\\\\\n'")
+        round_trip(double, '\\\\\n', '"\\\\\\\\\\n"')
+        round_trip(single, '\\\\\n', "'\\\\\\\\\\n'")
+        round_trip(double, '\\\\\n', '"\\\\\\\\\\n"')
 
     def test_extended(self):
-        assert quote.single('🔑') == "'🔑'"
-        assert quote.single_ascii('🔑') == "'\\ud83d\\udd11'"
-        assert quote.double('🔑') == '"🔑"'
-        assert quote.double_ascii('🔑') == '"\\ud83d\\udd11"'
+        round_trip(single, '🔑', "'🔑'")
+        round_trip(single_ascii, '🔑', "'\\ud83d\\udd11'")
+        round_trip(double, '🔑', '"🔑"')
+        round_trip(double_ascii, '🔑', '"\\ud83d\\udd11"')
 
     def test_quoter(self):
-        assert quote.quoter(False, False)('🔑') == "'🔑'"
-        assert quote.quoter(False, True)('🔑') == "'\\ud83d\\udd11'"
-        assert quote.quoter(True, False)('🔑') == '"🔑"'
-        assert quote.quoter(True, True)('🔑') == '"\\ud83d\\udd11"'
+        round_trip(quoter(False, False), '🔑', "'🔑'")
+        round_trip(quoter(False, True), '🔑', "'\\ud83d\\udd11'")
+        round_trip(quoter(True, False), '🔑', '"🔑"')
+        round_trip(quoter(True, True), '🔑', '"\\ud83d\\udd11"')

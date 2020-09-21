@@ -33,6 +33,7 @@ class JsonTransformer(lark.Transformer):
 class KsonTransformer(JsonTransformer):
     @args
     def string(self, s):
+        # WRONG
         regex = QUOTE_RE if s[0] == "'" else DOUBLE_QUOTE_RE
         s = regex.sub(r'\1' + s[0], s[1:-1])
         return RETURN_RE.sub(r'\1', s)
