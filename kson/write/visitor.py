@@ -1,12 +1,13 @@
+from . import quote
+from json import encoder
 import functools
-import json
 
 
 class Visitor:
-    def __init__(self, check_circular, quote, sort_keys):
-        self._visited = {} if check_circular else None
-        self.quote = quote
-        self.sort_keys = sort_keys
+    def __init__(self, option):
+        self._visited = set() if option.check_circular else None
+        self.quote = quote.quoter(option.double_quote, option.ensure_ascii)
+        self.sort_keys = option.sort_keys
 
     def _visit(self, x):
         if self._visited is not None:
@@ -35,9 +36,9 @@ class Visitor:
     def _(self, x: float):
         if x != x:
             return 'NaN'
-        if x == json.INFINITY:
+        if x == encoder.INFINITY:
             return 'Infinity'
-        if x == -json.INFINITY:
+        if x == -encoder.INFINITY:
             return '-Infinity'
         return repr(x)
 
