@@ -43,16 +43,16 @@ class KsonParserTest(unittest.TestCase):
 
     def test_quote_backquoted(self):
         assert parse(r'"he\"llo"') == 'he"llo'
-        assert parse(r'"he\\\"llo"') == 'he\\\\\"llo'
-        assert parse(r'"he\\"') == r'he\\'
+        assert parse(r'"he\\\"llo"') == 'he\\\"llo'
+        assert parse(r'"he\\"') == 'he\\'
 
     def test_single_quote_backquoted(self):
-        assert parse(r"'he\'llo'") == 'he\'llo'
-        assert parse(r"'he\"llo'") == r'he\"llo'
+        assert parse("'he\\'llo'") == 'he\'llo'
+        assert parse("'he\\\\\"llo'") == r'he\"llo'
 
     def test_double_quote_backquoted(self):
-        assert parse(r'"he\'llo"') == r"he\'llo"
-        assert parse(r'"he\"llo"') == "he\"llo"
+        assert parse('"he\\\\\'llo"') == r"he\'llo"
+        assert parse('"he\\"llo"') == "he\"llo"
 
     def test_binary(self):
         test_json = '`marker`binary`marker`'

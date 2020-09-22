@@ -1,5 +1,6 @@
 from kson.write.visitor import Visitor
 from kson.write.options import Options
+import math
 import unittest
 
 
@@ -21,6 +22,9 @@ class VisitorTest(unittest.TestCase):
         assert visit({}) == '{}'
         assert visit(23.5) == '23.5'
         assert visit('hello') == "'hello'"
+        assert visit(math.inf) == 'inf'
+        assert visit(-math.inf) == '-inf'
+        assert visit(math.nan) == 'nan'
 
     def test_list(self):
         assert visit([]) == '[]'

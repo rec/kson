@@ -7,6 +7,9 @@ ESCAPE_DCT = dict(encoder.ESCAPE_DCT)
 del ESCAPE_DCT['"']
 ESCAPE_DCT["'"] = "\\'"
 
+double = encoder.encode_basestring
+double_ascii = encoder.encode_basestring_ascii
+
 
 def quoter(double_quote: bool, ensure_ascii: bool):
     if double_quote:
@@ -14,11 +17,11 @@ def quoter(double_quote: bool, ensure_ascii: bool):
     return single_ascii if ensure_ascii else single
 
 
-double = encoder.encode_basestring
-double_ascii = encoder.encode_basestring_ascii
-
-
 def single(s):
+    """
+    Return a KSON representation of a Python string with
+    single quotes, allowing arbitary Unicode characters
+    """
     def replace(match):
         return ESCAPE_DCT[match.group(0)]
 
@@ -26,7 +29,9 @@ def single(s):
 
 
 def single_ascii(s):
-    """Return an ASCII-only KSON representation of a Python string
+    """
+    Return an ASCII-only KSON representation of a Python string with
+    single quotes
     """
     def replace(match):
         s = match.group(0)

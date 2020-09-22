@@ -1,13 +1,13 @@
 from . import quote
-from json import encoder
 import functools
+import math
 
 
 class Visitor:
-    def __init__(self, option):
-        self._visited = set() if option.check_circular else None
-        self.quote = quote.quoter(option.double_quote, option.ensure_ascii)
-        self.sort_keys = option.sort_keys
+    def __init__(self, options):
+        self._visited = set() if options.check_circular else None
+        self.quote = quote.quoter(options.double_quote, options.ensure_ascii)
+        self.options = options
 
     def _visit(self, x):
         if self._visited is not None:
@@ -18,6 +18,8 @@ class Visitor:
 
     @functools.singledispatchmethod
     def visit(self, x):
+        if self.options.default:
+            return self.options.default(x)
         raise TypeError('Cannot visit %s' % type(x))
 
     @visit.register
@@ -35,12 +37,16 @@ class Visitor:
     @visit.register
     def _(self, x: float):
         if x != x:
-            return 'NaN'
-        if x == encoder.INFINITY:
-            return 'Infinity'
-        if x == -encoder.INFINITY:
-            return '-Infinity'
-        return repr(x)
+            f = 'nan'
+        elif x == math.inf:
+            f = 'inf'
+        elif x == -math.inf:
+            f = '-inf'
+        else:
+            return repr(x)
+        if self.options.allow_nan:
+            return f
+        raise ValueError('Out of range float value: %r' % x)
 
     @visit.register
     def _(self, x: str):
@@ -55,8 +61,12 @@ class Visitor:
     def _(self, x: list):
         self._visit(x)
         yield '['
-        for i, item in enumerate(x):
-            if i:
+
+        first = True
+        for item in x:
+            if first:
+                first = False
+            else:
                 yield ','
             yield from self.visit(item)
         yield ']'
@@ -67,13 +77,19 @@ class Visitor:
         yield '{'
 
         items = x.items()
-        if self.sort_keys:
+        if self.options.sort_keys:
             items = sorted(items)
-        for i, (k, v) in enumerate(items):
-            if i:
-                yield ','
+
+        first = True
+        for k, v in items:
             if not isinstance(k, str):
+                if self.options.skipkeys:
+                    continue
                 raise TypeError('Keys must be strings')
+            if first:
+                first = False
+            else:
+                yield ','
             yield self.quote(k)
             yield ':'
             yield from self.visit(v)

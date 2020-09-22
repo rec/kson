@@ -9,10 +9,17 @@
       | "true"             -> true
       | "false"            -> false
       | "null"             -> null
+      | NAN                -> nan
+      | INF                -> inf
+      | MINUS_INF          -> minus_inf
 
 array  : "[" [ ","? value ("," value)* ","? ] "]"
 object : "{" [ ","? pair ("," pair)* ","? ] "}"
 pair   : string ":" value
+
+NAN : "nan"  | "Nan"
+INF : "inf"  | "Infinity"
+MINUS_INF : "-inf" | "-Infinity"
 
 ESCAPED_STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
 ESCAPED_STRING_SINGLE : "'" _STRING_ESC_INNER "'"

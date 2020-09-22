@@ -1,6 +1,8 @@
 import base64
 import lark
 import re
+from .write import unquote
+import math
 
 args = lark.v_args(inline=True)
 
@@ -33,10 +35,7 @@ class JsonTransformer(lark.Transformer):
 class KsonTransformer(JsonTransformer):
     @args
     def string(self, s):
-        # WRONG
-        regex = QUOTE_RE if s[0] == "'" else DOUBLE_QUOTE_RE
-        s = regex.sub(r'\1' + s[0], s[1:-1])
-        return RETURN_RE.sub(r'\1', s)
+        return unquote.unquote(s)
 
     def astring(self, s):
         s = s[0]
@@ -56,3 +55,12 @@ class KsonTransformer(JsonTransformer):
         if not s.endswith(b'</' + s[:tsize]):
             raise ValueError('A bstring must end with its token')
         return s[tsize + 1 : -tsize - 2]
+
+    def nan(self, _):
+        return math.nan
+
+    def inf(self, _):
+        return math.inf
+
+    def minus_inf(self, _):
+        return -math.inf

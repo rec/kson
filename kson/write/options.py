@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import os
 import uuid
 
 DEFAULT_MARKER = b'>'
@@ -43,7 +42,7 @@ class Options:
       dictionaries will be sorted by key.
     """
 
-    record_end: str = os.linesep
+    record_end: str = None
     trailing_commas: bool = True
     double_quote: bool = False
     binary_marker: bytes = DEFAULT_MARKER
