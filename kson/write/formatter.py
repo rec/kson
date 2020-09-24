@@ -1,19 +1,21 @@
 import base64
+import os
 
 
-def formatter(items: list, options: object, binary: bool = False):
+def formatter(items, options, binary):
     quote = '"' if options.double_quote else "'"
-    ind = options.ident * ' '
+    one_indent = options.indent * ' '
     marker = options.binary_marker
     indent = '\n'
+
     if options.separators:
         item_separator, key_separator = options.separators
     elif binary:
         item_separator, key_separator = ',:'
     else:
         item_separator, key_separator = ', ', ': '
-    previous = ''
 
+    previous = ''
     for i in items:
         if not isinstance(i, str):
             if binary:
@@ -23,19 +25,22 @@ def formatter(items: list, options: object, binary: bool = False):
 
         elif i in '[{':
             yield i
-            if ind:
-                indent += ind
+            if one_indent:
+                indent += one_indent
                 yield indent
 
         elif i in ']}':
             if options.trailing_commas and previous not in '[{':
                 yield ','
-            if ind:
+            if one_indent:
                 indent = indent[:-options.indent]
             yield i
 
         elif i == ',':
-            yield i + indent if ind else item_separator
+            if one_indent:
+                yield i + indent
+            else:
+                yield item_separator
 
         elif i == ':':
             yield key_separator
@@ -44,3 +49,8 @@ def formatter(items: list, options: object, binary: bool = False):
             yield i
 
         previous = i
+
+    if options.record_end is not None:
+        yield options.record_end
+    elif not binary:
+        yield os.linesep

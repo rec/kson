@@ -10,9 +10,6 @@ while b'>' in DEFAULT_MARKER:
 @dataclass
 class Options:
     """
-    Serialize ``obj`` as a KSON formatted stream to ``fp`` (a
-    ``.write()``-supporting file-like object).
-
     ARGUMENTS
       If ``skipkeys`` is true then ``dict`` keys that are not basic types
       (``str``, ``int``, ``float``, ``bool``, ``None``) will be skipped
@@ -52,7 +49,7 @@ class Options:
     ensure_ascii: bool = True
     check_circular: bool = True
     allow_nan: bool = True
-    indent: object = None
+    indent: int = 0
     separators: object = None
     default: object = None
     sort_keys: bool = False

@@ -1,30 +1,31 @@
+from . formatter import formatter
+from . options import Options
 from . visitor import Visitor
+import io
 
 
-class Writer:
-    def __init__(self, options, fp):
-        self.options = options
-        self.fp = fp
-        self._write = _writer(fp)
+def write_items(items, fp, options):
+    binary = not hasattr(fp, 'newlines')
+    written = 0
 
-    def dump(self, x):
-        visitor = Visitor(self.options)
-        for i in visitor.visiti(x):
-            self._write(i)
+    for i in items:
+        parts = Visitor(options).visit(i)
+        for part in formatter(parts, options, binary):
+            if binary and isinstance(part, str):
+                part = part.encode()
+            written += fp.write(part)
 
-        if self.options.record_end:
-            self.options.write(self.options.record_end)
+    return written
 
 
-def _writer(fp):
-    def write_text(s):
-        if not isinstance(s, str):
-            raise TypeError('Cannot write binary to text stream')
-        fp.write(s)
+def dump(obj, fp, **kwargs):
+    """Serialize ``obj`` as a KSON formatted stream to ``fp`` (a
+    ``.write()``-supporting file-like object).
+    """
+    return write_items([obj], fp, Options(**kwargs))
 
-    def write_binary(s):
-        if isinstance(s, str):
-            s = s.encode()
-        fp.write(s)
 
-    return write_text if hasattr(fp, 'newlines') else write_binary
+def dumps(obj, binary=False, **kwargs):
+    fp = io.BytesIO() if binary else io.StringIO()
+    dump(obj, fp, **kwargs)
+    return fp.getvalue()

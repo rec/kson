@@ -1,10 +1,7 @@
-from kson import parser
+from kson.parser import parse
 import json
 import lark
 import unittest
-
-parse = parser.make_parser('grammar/kson.lark', True)
-binary_parse = parser.make_parser('grammar/kson.lark', True, use_bytes=True)
 
 
 class KsonParserTest(unittest.TestCase):
@@ -82,4 +79,6 @@ class KsonParserTest(unittest.TestCase):
         assert list(parse('a"%s"' % a)) == list(data)
 
     def test_bstring(self):
-        assert binary_parse(b'<to>abc</to>') == b'abc'
+        assert parse(b'<to>abc</to>') == b'abc'
+        with self.assertRaises(TypeError):
+            parse('<to>abc</to>')
