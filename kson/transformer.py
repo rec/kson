@@ -4,7 +4,7 @@ import re
 from .write import unquote
 import math
 
-args = lark.v_args(inline=True)
+inline = lark.v_args(inline=True)
 
 ODD_BACKSLASHES = r'(?<!\\)(\\\\)*\\'
 RETURN_RE = re.compile(ODD_BACKSLASHES + '\n')
@@ -13,14 +13,14 @@ DOUBLE_QUOTE_RE = re.compile(ODD_BACKSLASHES + '(")')
 
 
 class JsonTransformer(lark.Transformer):
-    @args
+    @inline
     def string(self, s):
         return DOUBLE_QUOTE_RE.sub(r'\1' + s[0], s[1:-1])
 
     array = list
     pair = tuple
     object = dict
-    number = args(float)
+    number = inline(float)
 
     def null(self, _):
         return None
@@ -33,15 +33,17 @@ class JsonTransformer(lark.Transformer):
 
 
 class KsonTransformer(JsonTransformer):
-    @args
+    @inline
     def string(self, s):
         return unquote.unquote(s)
 
+    @inline
     def astring(self, s):
-        return base64.b85decode(s[0][2:-1])
+        return base64.b85decode(s[2:-1])
 
+    @inline
     def bstring(self, s):
-        s = s[0].value
+        s = s.value
         tsize = s.index(b'>')
         if not s.endswith(b'</' + s[:tsize]):
             raise ValueError('A bstring must end with its token')

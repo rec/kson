@@ -3,27 +3,28 @@ from pathlib import Path
 import lark
 
 
-def _parser(is_kson, binary):
-    file = 'grammar/kson.lark' if is_kson else 'grammar/json.lark'
-    transformer = KsonTransformer() if is_kson else JsonTransformer()
-
+def _parser(grammar, transformer, use_bytes):
     return lark.Lark(
-        Path(file).read_text(),
+        grammar,
         transformer=transformer,
         parser='lalr',
         lexer='standard',
         propagate_positions=False,
         maybe_placeholders=False,
-        use_bytes=binary,
+        use_bytes=use_bytes,
     ).parser.parse
 
 
-parse_json = _parser(False, False)
-parse_string = _parser(True, False)
-parse_binary = _parser(True, True)
+GRAMMAR_DIR = Path(__file__).parents[1] / 'grammar'
+JSON_GRAMMAR = (GRAMMAR_DIR / 'json.lark').read_text()
+KSON_GRAMMAR = (GRAMMAR_DIR / 'kson.lark').read_text()
+
+parse_json = _parser(JSON_GRAMMAR, JsonTransformer(), False)
+parse_string = _parser(KSON_GRAMMAR, KsonTransformer(), False)
+parse_bytes = _parser(KSON_GRAMMAR, KsonTransformer(), True)
 
 
 def parse(s):
     if isinstance(s, str):
         return parse_string(s)
-    return parse_binary(s)
+    return parse_bytes(s)
