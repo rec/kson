@@ -12,19 +12,36 @@ QUOTE_RE = re.compile(ODD_BACKSLASHES + "(')")
 
 
 class KsonTransformer(lark.Transformer):
-    array = list
-    object = dict
-    object_entry = tuple
-    integer = inline(int)
-    floating = inline(float)
+    @inline
+    def array(self, *args):
+        return list(args)
 
-    def null(self, _):
+    @inline
+    def object(self, *args):
+        return dict(args)
+
+    @inline
+    def object_entry(self, k, v):
+        return k, v
+
+    @inline
+    def integer(self, i):
+        return int(i)
+
+    @inline
+    def floating(self, i):
+        return float(i)
+
+    @inline
+    def null(self):
         return None
 
-    def false(self, _):
+    @inline
+    def false(self):
         return False
 
-    def true(self, _):
+    @inline
+    def true(self):
         return True
 
     @inline
@@ -43,11 +60,14 @@ class KsonTransformer(lark.Transformer):
             raise ValueError('A bstring must end with its token')
         return v[tsize + 1 : -tsize - 2]
 
-    def nan(self, _):
+    @inline
+    def nan(self):
         return math.nan
 
-    def inf(self, _):
+    @inline
+    def inf(self):
         return math.inf
 
-    def minus_inf(self, _):
+    @inline
+    def minus_inf(self):
         return -math.inf
