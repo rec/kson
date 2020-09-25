@@ -1,4 +1,4 @@
-from ..write import unquote
+from . import unquote
 import base64
 import lark
 import math
