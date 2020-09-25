@@ -1,4 +1,5 @@
-from .transformer import JsonTransformer, KsonTransformer
+from .json_transformer import JsonTransformer
+from .transformer import KsonTransformer
 from pathlib import Path
 import lark
 

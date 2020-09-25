@@ -1,22 +1,17 @@
+from .write import unquote
 import base64
 import lark
-import re
-from .write import unquote
 import math
+import re
 
 inline = lark.v_args(inline=True)
 
 ODD_BACKSLASHES = r'(?<!\\)(\\\\)*\\'
 RETURN_RE = re.compile(ODD_BACKSLASHES + '\n')
 QUOTE_RE = re.compile(ODD_BACKSLASHES + "(')")
-DOUBLE_QUOTE_RE = re.compile(ODD_BACKSLASHES + '(")')
 
 
-class JsonTransformer(lark.Transformer):
-    @inline
-    def string(self, s):
-        return DOUBLE_QUOTE_RE.sub(r'\1' + s[0], s[1:-1])
-
+class KsonTransformer(lark.Transformer):
     array = list
     object = dict
     object_entry = tuple
@@ -32,8 +27,6 @@ class JsonTransformer(lark.Transformer):
     def true(self, _):
         return True
 
-
-class KsonTransformer(JsonTransformer):
     @inline
     def string(self, s):
         return unquote.unquote(s)
