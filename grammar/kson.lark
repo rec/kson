@@ -5,20 +5,20 @@
       | string
       | astring
       | bstring
-      | SIGNED_NUMBER      -> number
-      | "true"             -> true
-      | "false"            -> false
-      | "null"             -> null
-      | NAN                -> nan
-      | INF                -> inf
-      | MINUS_INF          -> minus_inf
+      | SIGNED_NUMBER -> number
+      | "true"        -> true
+      | "false"       -> false
+      | "null"        -> null
+      | NAN           -> nan
+      | INF           -> inf
+      | MINUS_INF     -> minus_inf
 
 array  : "[" [ ","? value ("," value)* ","? ] "]"
-object : "{" [ ","? pair ("," pair)* ","? ] "}"
-pair   : string ":" value
+object : "{" [ ","? object_entry ("," object_entry)* ","? ] "}"
+object_entry   : string ":" value
 
-NAN : "nan"  | "Nan"
-INF : "inf"  | "Infinity"
+NAN : "nan" | "NaN"
+INF : "inf" | "Infinity"
 MINUS_INF : "-inf" | "-Infinity"
 
 ESCAPED_STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
@@ -38,7 +38,6 @@ _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
 WS: /[ \t\f]/+
 %ignore WS
 %ignore _NEWLINE
-
 
 %import common._STRING_ESC_INNER
 %import common._STRING_INNER

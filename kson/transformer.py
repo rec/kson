@@ -18,8 +18,8 @@ class JsonTransformer(lark.Transformer):
         return DOUBLE_QUOTE_RE.sub(r'\1' + s[0], s[1:-1])
 
     array = list
-    pair = tuple
     object = dict
+    object_entry = tuple
     number = inline(float)
 
     def null(self, _):
@@ -43,11 +43,11 @@ class KsonTransformer(JsonTransformer):
 
     @inline
     def bstring(self, s):
-        s = s.value
-        tsize = s.index(b'>')
-        if not s.endswith(b'</' + s[:tsize]):
+        v = s.value
+        tsize = v.index(b'>')
+        if not v.endswith(b'</' + v[:tsize]):
             raise ValueError('A bstring must end with its token')
-        return s[tsize + 1 : -tsize - 2]
+        return v[tsize + 1 : -tsize - 2]
 
     def nan(self, _):
         return math.nan

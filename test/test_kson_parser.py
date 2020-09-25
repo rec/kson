@@ -82,3 +82,14 @@ class KsonParserTest(unittest.TestCase):
         assert parse(b'<to>abc</to>') == b'abc'
         with self.assertRaises(TypeError):
             parse('<to>abc</to>')
+
+    def test_non_finite_numbers(self):
+        for i in '[nan, inf, -inf]', '[NaN, Infinity, -Infinity]':
+            nan, inf, minus_inf = parse(i)
+            assert nan != nan
+            assert inf == float('inf')
+            assert minus_inf == -inf
+
+        for i in 'NAN', 'nAn', 'Inf', 'infinity', '--inf':
+            with self.assertRaises(Exception):
+                parse(i)
