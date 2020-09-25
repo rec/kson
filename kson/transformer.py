@@ -21,7 +21,7 @@ class KsonTransformer(lark.Transformer):
         return dict(args)
 
     @inline
-    def object_entry(self, k, v):
+    def key_value(self, k, v):
         return k, v
 
     @inline

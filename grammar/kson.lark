@@ -14,8 +14,8 @@
       | inf
       | minus_inf
 
-object : "{" [ ","? object_entry ("," object_entry)* ","? ] "}"
-object_entry   : string ":" value
+object : "{" [ ","? key_value ("," key_value)* ","? ] "}"
+key_value   : string ":" value
 
 array  : "[" [ ","? value ("," value)* ","? ] "]"
 
