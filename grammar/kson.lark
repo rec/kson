@@ -7,20 +7,28 @@
       | bstring
       | integer
       | floating
+      | false
+      | true
+      | null
       | nan
       | inf
       | minus_inf
-      | true
-      | false
-      | null
 
 object : "{" [ ","? object_entry ("," object_entry)* ","? ] "}"
-array  : "[" [ ","? value ("," value)* ","? ] "]"
 object_entry   : string ":" value
 
-nan : "nan" | "NaN"
-inf : "inf" | "Infinity"
-minus_inf : "-inf" | "-Infinity"
+array  : "[" [ ","? value ("," value)* ","? ] "]"
+
+string : STRING_SINGLE | STRING_DOUBLE
+STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
+STRING_SINGLE : "'" _STRING_ESC_INNER "'"
+
+astring : ASTRING_SINGLE | ASTRING_DOUBLE
+ASTRING_SINGLE : "a'" /.*?'/
+ASTRING_DOUBLE : "a\"" /.*?\"/
+
+bstring : "<" /(?P<KSON_MARKER>.*?)>.*?<\/(?P=KSON_MARKER)/ ">"
+
 integer: SIGNED_INT
 floating: SIGNED_FLOAT
 
@@ -28,16 +36,9 @@ true: "true"
 false: "false"
 null: "null"
 
-ESCAPED_STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
-ESCAPED_STRING_SINGLE : "'" _STRING_ESC_INNER "'"
-
-string : ESCAPED_STRING_SINGLE | ESCAPED_STRING_DOUBLE
-
-ASTRING_SINGLE : "a'" /.*?'/
-ASTRING_DOUBLE : "a\"" /.*?\"/
-
-astring : ASTRING_SINGLE | ASTRING_DOUBLE
-bstring : "<" /(?P<KSON_MARKER>.*?)>.*?<\/(?P=KSON_MARKER)/ ">"
+nan : "nan" | "NaN"
+inf : "inf" | "Infinity"
+minus_inf : "-inf" | "-Infinity"
 
 COMMENT: /#[^\n]*/
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
