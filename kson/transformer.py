@@ -20,7 +20,8 @@ class JsonTransformer(lark.Transformer):
     array = list
     object = dict
     object_entry = tuple
-    number = inline(float)
+    integer = inline(int)
+    floating = inline(float)
 
     def null(self, _):
         return None

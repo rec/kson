@@ -5,7 +5,8 @@
       | string
       | astring
       | bstring
-      | number
+      | integer
+      | floating
       | nan
       | inf
       | minus_inf
@@ -20,7 +21,8 @@ object_entry   : string ":" value
 nan : "nan" | "NaN"
 inf : "inf" | "Infinity"
 minus_inf : "-inf" | "-Infinity"
-number: SIGNED_NUMBER
+integer: SIGNED_INT
+floating: SIGNED_FLOAT
 
 true: "true"
 false: "false"
@@ -46,4 +48,5 @@ WS: /[ \t\f]/+
 
 %import common._STRING_ESC_INNER
 %import common._STRING_INNER
-%import common.SIGNED_NUMBER
+%import common.SIGNED_INT
+%import common.SIGNED_FLOAT
