@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 import uuid
 
-DEFAULT_MARKER = b'>'
-
-while b'>' in DEFAULT_MARKER:
-    DEFAULT_MARKER = uuid.uuid4().bytes
+BINARY_MARKER = uuid.uuid4().bytes
+while any(i in BINARY_MARKER for i in b'"\''):
+    BINARY_MARKER = uuid.uuid4().bytes
 
 
 @dataclass
@@ -42,7 +41,7 @@ class Options:
     record_end: str = None
     trailing_commas: bool = True
     double_quote: bool = False
-    binary_marker: bytes = DEFAULT_MARKER
+    binary_marker: bytes = BINARY_MARKER
 
     # These next parameters have the same meaning as in json.dump
     skipkeys: bool = False

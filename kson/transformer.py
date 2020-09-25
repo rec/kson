@@ -55,10 +55,9 @@ class KsonTransformer(lark.Transformer):
     @inline
     def bstring(self, s):
         v = s.value
-        tsize = v.index(b'>')
-        if not v.endswith(b'</' + v[:tsize]):
-            raise ValueError('A bstring must end with its token')
-        return v[tsize + 1 : -tsize - 2]
+        tsize = 1 + v.index(v[1], 2)
+        assert v.endswith(v[1:tsize])
+        return v[tsize : -tsize + 1]
 
     @inline
     def nan(self):

@@ -27,7 +27,9 @@ astring : ASTRING_SINGLE | ASTRING_DOUBLE
 ASTRING_SINGLE : "a'" /.*?'/
 ASTRING_DOUBLE : "a\"" /.*?\"/
 
-bstring : "<" /(?P<KSON_MARKER>.*?)>.*?<\/(?P=KSON_MARKER)/ ">"
+bstring : BSTRING_SINGLE | BSTRING_DOUBLE
+BSTRING_SINGLE : "b'" /(?P<KSON_TAG>.*?)'.*?'(?P=KSON_TAG)'/
+BSTRING_DOUBLE : "b\"" /(?P<KSON_TAG2>.*?)".*?\"(?P=KSON_TAG2)"/
 
 integer: SIGNED_INT
 floating: SIGNED_FLOAT

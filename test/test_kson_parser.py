@@ -79,8 +79,9 @@ class KsonParserTest(unittest.TestCase):
         assert list(parse('a"%s"' % a)) == list(data)
 
     def test_bstring(self):
-        assert parse(b'<to>abc</to>') == b'abc'
-        with self.assertRaises(TypeError):
+        assert parse(b"b'to'abc'to'") == b'abc'
+        assert parse(b'b"to"abc"to"') == b'abc'
+        with self.assertRaises(Exception):
             parse('<to>abc</to>')
 
     def test_non_finite_numbers(self):
