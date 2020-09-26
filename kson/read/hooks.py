@@ -78,20 +78,3 @@ class Hooks:
 
 NAMES = [i for i in Hooks.__dict__ if not i.startswith('_')]
 HOOKS = Hooks()
-
-
-def _names():
-    found = set()
-    for rule in parser.lark(HOOKS._transformer()).rules:
-        name = rule.origin.name
-        if not (name.startswith('_') or name in found):
-            yield name
-            found.add(name)
-
-
-NAMES2 = list(_names())
-for i, (a, b) in enumerate(zip(NAMES, NAMES2)):
-    print(a, b)
-
-
-assert NAMES == NAMES2, f'{NAMES=}, {NAMES2=}'
