@@ -1,4 +1,4 @@
-from . import get_lark
+from . import parser
 from . import unquote
 import base64
 import functools
@@ -60,7 +60,7 @@ class Hooks:
 
     @functools.lru_cache()
     def _lark(self, use_bytes):
-        return get_lark.get_lark(self._transformer(), use_bytes)
+        return parser.lark(self._transformer(), use_bytes)
 
     @functools.lru_cache()
     def _transformer(self):
@@ -82,7 +82,7 @@ HOOKS = Hooks()
 
 def _names():
     found = set()
-    for rule in get_lark.get_lark(HOOKS._transformer()).rules:
+    for rule in parser.lark(HOOKS._transformer()).rules:
         name = rule.origin.name
         if not (name.startswith('_') or name in found):
             yield name

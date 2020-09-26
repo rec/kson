@@ -1,4 +1,4 @@
-from . import get_lark
+from . import parser
 import lark
 import re
 
@@ -7,7 +7,7 @@ inline = lark.v_args(inline=True)
 ODD_BACKSLASHES = r'(?<!\\)(\\\\)*\\'
 DOUBLE_QUOTE_RE = re.compile(ODD_BACKSLASHES + '(")')
 
-JSON_GRAMMAR = get_lark.grammar('json')
+JSON_GRAMMAR = parser.grammar('json')
 
 
 class JsonTransformer(lark.Transformer):
@@ -31,4 +31,4 @@ class JsonTransformer(lark.Transformer):
         return True
 
 
-parse = get_lark.parser(JsonTransformer(), grammar=JSON_GRAMMAR)
+parse = parser.parser(JsonTransformer(), grammar=JSON_GRAMMAR)
