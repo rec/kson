@@ -23,10 +23,7 @@ def _version():
 
 if __name__ == '__main__':
     VERSION = _version()
-    if False:
-        REQUIREMENTS = Path('requirements.txt').read_text().splitlines()
-    else:
-        REQUIREMENTS = []
+    REQUIREMENTS = Path('requirements.txt').read_text().splitlines()
 
     setup(
         name='kson',
