@@ -1,31 +1,14 @@
+from . import get_lark
 from . import hooks
-from . json import JsonTransformer
-from pathlib import Path
+from . import json
 import functools
-import lark
 
-GRAMMAR_DIR = Path(__file__).parents[2] / 'grammar'
-JSON_GRAMMAR = (GRAMMAR_DIR / 'json.lark').read_text()
-KSON_GRAMMAR = (GRAMMAR_DIR / 'kson.lark').read_text()
-JSON_TRANSFORMER = JsonTransformer()
 KSON_TRANSFORMER = hooks.HOOKS._transformer()
-
-
-def _lark(transformer=KSON_TRANSFORMER, use_bytes=False, grammar=KSON_GRAMMAR):
-    return lark.Lark(
-        grammar,
-        transformer=transformer,
-        parser='lalr',
-        lexer='standard',
-        propagate_positions=False,
-        maybe_placeholders=False,
-        use_bytes=use_bytes,
-    )
 
 
 def _names():
     found = set()
-    for rule in _lark(KSON_TRANSFORMER).rules:
+    for rule in get_lark(KSON_TRANSFORMER).rules:
         name = rule.origin.name
         if name not in found:
             yield name
@@ -35,8 +18,8 @@ def _names():
 NAMES = _names()
 
 
-def _parser(transformer, use_bytes=False, grammar=KSON_GRAMMAR):
-    return _lark(transformer, use_bytes, grammar).parser.parse
+def _parser(transformer, use_bytes=False, grammar=get_lark.KSON_GRAMMAR):
+    return get_lark.get_lark(transformer, use_bytes, grammar).parser.parse
 
 
 @functools.lru_cache()
@@ -49,7 +32,7 @@ parse_bytes = parser(use_bytes=True)
 
 
 # Legacy - for comparison testing only
-parse_json = _parser(JSON_TRANSFORMER, grammar=JSON_GRAMMAR)
+parse_json = _parser(json.TRANSFORMER, grammar=get_lark.JSON_GRAMMAR)
 
 
 def parse(s):

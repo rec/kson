@@ -1,3 +1,4 @@
+from . import get_lark
 from . import unquote
 import base64
 import functools
@@ -53,8 +54,7 @@ class Hooks:
 
     @functools.lru_cache()
     def _lark(self, use_bytes):
-        from . import parser
-        return parser._lark(self._transformer(), use_bytes)
+        return get_lark.get_lark(self._transformer(), use_bytes)
 
     @functools.lru_cache()
     def _transformer(self):

@@ -27,3 +27,6 @@ class JsonTransformer(lark.Transformer):
 
     def true(self, _):
         return True
+
+
+TRANSFORMER = JsonTransformer()
