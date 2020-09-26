@@ -7,8 +7,11 @@ import math
 
 
 class Hooks:
-    def array(self, *args):
-        return list(args)
+    def start(self, *args):
+        return args
+
+    def value(self, x):
+        return x
 
     def object(self, *args):
         return dict(args)
@@ -16,20 +19,8 @@ class Hooks:
     def key_value(self, k, v):
         return k, v
 
-    def integer(self, i):
-        return int(i)
-
-    def floating(self, i):
-        return float(i)
-
-    def null(self):
-        return None
-
-    def false(self):
-        return False
-
-    def true(self):
-        return True
+    def array(self, *args):
+        return list(args)
 
     def string(self, s):
         return unquote.unquote(s)
@@ -42,6 +33,21 @@ class Hooks:
         tsize = 1 + v.index(v[1], 2)
         assert v.endswith(v[1:tsize])
         return v[tsize : -tsize + 1]
+
+    def integer(self, i):
+        return int(i)
+
+    def floating(self, i):
+        return float(i)
+
+    def false(self):
+        return False
+
+    def true(self):
+        return True
+
+    def null(self):
+        return None
 
     def nan(self):
         return math.nan
@@ -70,5 +76,22 @@ class Hooks:
         return self._lark(not isinstance(s, str)).parser.parse(s)
 
 
-NAMES = tuple(i for i in dir(Hooks) if not i.startswith('_'))
+NAMES = [i for i in Hooks.__dict__ if not i.startswith('_')]
 HOOKS = Hooks()
+
+
+def _names():
+    found = set()
+    for rule in get_lark.get_lark(HOOKS._transformer()).rules:
+        name = rule.origin.name
+        if not (name.startswith('_') or name in found):
+            yield name
+            found.add(name)
+
+
+NAMES2 = list(_names())
+for i, (a, b) in enumerate(zip(NAMES, NAMES2)):
+    print(a, b)
+
+
+assert NAMES == NAMES2, f'{NAMES=}, {NAMES2=}'

@@ -34,8 +34,8 @@ BSTRING_DOUBLE : "b\"" /(?P<KSON_TAG2>.*?)".*?\"(?P=KSON_TAG2)"/
 integer: SIGNED_INT
 floating: SIGNED_FLOAT
 
-true: "true"
 false: "false"
+true: "true"
 null: "null"
 
 nan : "nan" | "NaN"

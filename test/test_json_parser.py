@@ -1,4 +1,4 @@
-from kson.read.parser import parse_json as parse
+from kson.read.json import parse
 import json
 import lark
 import unittest

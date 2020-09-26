@@ -63,7 +63,7 @@ class KsonParserTest(unittest.TestCase):
         assert parse(test_json) == "hello"
 
         test_json = '"hello" "hello"'
-        assert parse(test_json).children == ["hello", "hello"]
+        assert parse(test_json) == ("hello", "hello")
 
     def test_end_of_line(self):
         # THIS SHOULD FAIL!
