@@ -1,5 +1,5 @@
 from . import hooks
-from .json_transformer import JsonTransformer
+from . json import JsonTransformer
 from pathlib import Path
 import functools
 import lark
