@@ -1,7 +1,9 @@
-from .transformer import ODD_BACKSLASHES
-from .transformer import inline
 import lark
 import re
+
+inline = lark.v_args(inline=True)
+
+ODD_BACKSLASHES = r'(?<!\\)(\\\\)*\\'
 
 DOUBLE_QUOTE_RE = re.compile(ODD_BACKSLASHES + '(")')
 

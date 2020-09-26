@@ -1,7 +1,9 @@
-from kson.read.parser import parse
+from kson.read import hooks
 import json
 import lark
 import unittest
+
+parse = hooks.HOOKS
 
 
 class KsonParserTest(unittest.TestCase):

@@ -1,10 +1,17 @@
+from . import hooks
 from .json_transformer import JsonTransformer
-from .transformer import KsonTransformer
 from pathlib import Path
+import functools
 import lark
 
+GRAMMAR_DIR = Path(__file__).parents[2] / 'grammar'
+JSON_GRAMMAR = (GRAMMAR_DIR / 'json.lark').read_text()
+KSON_GRAMMAR = (GRAMMAR_DIR / 'kson.lark').read_text()
+JSON_TRANSFORMER = JsonTransformer()
+KSON_TRANSFORMER = hooks.HOOKS._transformer()
 
-def _parser(grammar, transformer, use_bytes):
+
+def _lark(transformer=KSON_TRANSFORMER, use_bytes=False, grammar=KSON_GRAMMAR):
     return lark.Lark(
         grammar,
         transformer=transformer,
@@ -13,16 +20,36 @@ def _parser(grammar, transformer, use_bytes):
         propagate_positions=False,
         maybe_placeholders=False,
         use_bytes=use_bytes,
-    ).parser.parse
+    )
 
 
-GRAMMAR_DIR = Path(__file__).parents[2] / 'grammar'
-JSON_GRAMMAR = (GRAMMAR_DIR / 'json.lark').read_text()
-KSON_GRAMMAR = (GRAMMAR_DIR / 'kson.lark').read_text()
+def _names():
+    found = set()
+    for rule in _lark(KSON_TRANSFORMER).rules:
+        name = rule.origin.name
+        if name not in found:
+            yield name
+            found.add(name)
 
-parse_json = _parser(JSON_GRAMMAR, JsonTransformer(), False)
-parse_string = _parser(KSON_GRAMMAR, KsonTransformer(), False)
-parse_bytes = _parser(KSON_GRAMMAR, KsonTransformer(), True)
+
+NAMES = _names()
+
+
+def _parser(transformer, use_bytes=False, grammar=KSON_GRAMMAR):
+    return _lark(transformer, use_bytes, grammar).parser.parse
+
+
+@functools.lru_cache()
+def parser(transformer=KSON_TRANSFORMER, use_bytes=False):
+    return _parser(transformer, use_bytes)
+
+
+parse_string = parser()
+parse_bytes = parser(use_bytes=True)
+
+
+# Legacy - for comparison testing only
+parse_json = _parser(JSON_TRANSFORMER, grammar=JSON_GRAMMAR)
 
 
 def parse(s):
