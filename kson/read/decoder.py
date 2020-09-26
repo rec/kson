@@ -6,7 +6,7 @@ import lark
 import math
 
 
-class Hooks:
+class Decoder:
     def start(self, *args):
         return args
 
@@ -76,5 +76,5 @@ class Hooks:
         return self._lark(not isinstance(s, str)).parser.parse(s)
 
 
-NAMES = [i for i in Hooks.__dict__ if not i.startswith('_')]
-HOOKS = Hooks()
+NAMES = [i for i in Decoder.__dict__ if not i.startswith('_')]
+DECODER = Decoder()
