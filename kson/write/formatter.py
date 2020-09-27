@@ -15,15 +15,14 @@ def formatter(items, options, binary):
     if options.separators:
         item_separator, key_separator = options.separators
     elif binary:
-        item_separator, key_separator = ',:'
+        item_separator, key_separator = ',', ':'
     else:
         item_separator, key_separator = ', ', ': '
 
-    previous = ''
-    for i in items:
+    for i, previous in _with_previous(items):
         if not isinstance(i, str):
             if binary:
-                yield from ('<', marker, '>', i, '</', marker, '>')
+                yield from ('b', quote, marker, quote, i, quote, marker, quote)
             else:
                 yield from ('a', quote, base64.b85decode(i).encode(), quote)
 
@@ -52,9 +51,14 @@ def formatter(items, options, binary):
         else:
             yield i
 
-        previous = i
-
     if options.record_end is not None:
         yield options.record_end
     elif not binary:
         yield os.linesep
+
+
+def _with_previous(it):
+    previous = None
+    for i in it:
+        yield i, previous
+        previous = i
