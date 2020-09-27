@@ -36,9 +36,8 @@ class RoundTripTest(unittest.TestCase):
 EXPECTED = """\
 {'empty_object': {}, \
 'empty_array': [], \
-'booleans': {'YES': true, \
-'NO': false,}, \
-'numbers': [0, 1, -2, 3.3, 440000.0, 6.6e-07,], \
-'strings': ['This', ['And', 'That', 'And a "b',],], \
-'nothing': null,}
+'booleans': {'YES': true, 'NO': false}, \
+'numbers': [0, 1, -2, 3.3, 440000.0, 6.6e-07], \
+'strings': ['This', ['And', 'That', 'And a "b']], \
+'nothing': null}
 """

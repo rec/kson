@@ -39,7 +39,7 @@ class Options:
     """
 
     record_end: str = None
-    trailing_commas: bool = True
+    trailing_commas: bool = None
     double_quote: bool = False
     binary_marker: bytes = BINARY_MARKER
 

@@ -7,6 +7,10 @@ def formatter(items, options, binary):
     one_indent = options.indent * ' '
     marker = options.binary_marker
     indent = '\n'
+    if options.trailing_commas is not None:
+        trailing_commas = options.trailing_commas
+    else:
+        trailing_commas = bool(options.indent)
 
     if options.separators:
         item_separator, key_separator = options.separators
@@ -30,7 +34,7 @@ def formatter(items, options, binary):
                 yield indent
 
         elif i in ']}':
-            if options.trailing_commas and previous not in '[{':
+            if trailing_commas and previous not in '[{':
                 yield ','
             if one_indent:
                 indent = indent[:-options.indent]
