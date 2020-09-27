@@ -34,7 +34,7 @@ def formatter(items, options, binary):
 
         elif i in ']}':
             if trailing_commas and previous not in '[{':
-                yield ','
+                yield ',' + indent
             if one_indent:
                 indent = indent[:-options.indent]
             yield i

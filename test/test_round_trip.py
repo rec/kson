@@ -56,19 +56,24 @@ EXPECTED2 = """\
     ],
   'booleans': {
     'YES': true,
-    'NO': false,},
+    'NO': false,
+    },
   'numbers': [
     0,
     1,
     -2,
     3.3,
     440000.0,
-    6.6e-07,],
+    6.6e-07,
+    ],
   'strings': [
     'This',
     [
       'And',
       'That',
-      'And a "b',],],
-  'nothing': null,}
+      'And a "b',
+      ],
+    ],
+  'nothing': null,
+  }
 """
