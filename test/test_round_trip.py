@@ -51,13 +51,13 @@ EXPECTED = """\
 EXPECTED2 = """\
 {
   'empty_object': {
-    },
+  },
   'empty_array': [
-    ],
+  ],
   'booleans': {
     'YES': true,
     'NO': false,
-    },
+  },
   'numbers': [
     0,
     1,
@@ -65,7 +65,7 @@ EXPECTED2 = """\
     3.3,
     440000.0,
     6.6e-07,
-    ],
+  ],
   'strings': [
     'This',
     [
@@ -73,7 +73,7 @@ EXPECTED2 = """\
       'That',
       'And a "b',
       ],
-    ],
+  ],
   'nothing': null,
   }
 """

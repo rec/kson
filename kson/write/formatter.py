@@ -23,6 +23,7 @@ def formatter(items, options, binary):
         item_separator, key_separator = ', ', ': '
 
     for behind, i, ahead in _look_ahead_behind(items):
+        old_indent = indent
         if not isinstance(i, str):
             if binary:
                 yield from ('b', quote, marker, quote, i, quote, marker, quote)
@@ -33,17 +34,22 @@ def formatter(items, options, binary):
             yield i
             if options.indent:
                 indent += one_indent
-                yield from (newline, indent)
+                yield newline
+                yield old_indent if ahead in CLOSING else indent
 
         elif i in CLOSING:
-            if trailing_commas and behind not in OPENING:
-                yield from (',', newline, indent)
             indent = indent[:-options.indent]
+            if trailing_commas and behind not in OPENING:
+                yield ','
+                yield newline
+                yield old_indent if ahead in CLOSING else indent
             yield i
 
         elif i == ',':
             if options.indent:
-                yield from (i, newline, indent)
+                yield i
+                yield newline
+                yield indent[:-options.indent] if ahead in CLOSING else indent
             else:
                 yield item_separator
 
