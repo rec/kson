@@ -8,7 +8,8 @@ def formatter(items, options, binary):
     quote = '"' if options.double_quote else "'"
     one_indent = options.indent * ' '
     marker = options.binary_marker
-    indent = '\n'
+    newline = '\n'
+    indent = ''
     if options.trailing_commas is not None:
         trailing_commas = options.trailing_commas
     else:
@@ -30,20 +31,19 @@ def formatter(items, options, binary):
 
         elif i in OPENING:
             yield i
-            if one_indent:
+            if options.indent:
                 indent += one_indent
-                yield indent
+                yield from (newline, indent)
 
         elif i in CLOSING:
             if trailing_commas and behind not in OPENING:
-                yield ',' + indent
-            if one_indent:
-                indent = indent[:-options.indent]
+                yield from (',', newline, indent)
+            indent = indent[:-options.indent]
             yield i
 
         elif i == ',':
-            if one_indent:
-                yield i + indent
+            if options.indent:
+                yield from (i, newline, indent)
             else:
                 yield item_separator
 
