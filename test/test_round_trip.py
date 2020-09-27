@@ -38,6 +38,25 @@ class RoundTripTest(unittest.TestCase):
         j3 = decoder.DECODER(s3)
         assert j2 == j3
 
+    def test_indent1(self):
+        items = []
+
+        s = writer.dumps(items, indent=2)
+        assert s == '[\n]\n'
+
+    def test_indent2(self):
+        items = [1]
+
+        s = writer.dumps(items, indent=2)
+        assert s == '[\n  1,\n]\n'
+
+    def test_indent3(self):
+        items = [1, [2, [3, 4], 5], 6]
+
+        s = writer.dumps(items, indent=2)
+
+        assert s == EXPECTED3
+
 
 EXPECTED = """\
 {'empty_object': {}, \
@@ -72,8 +91,22 @@ EXPECTED2 = """\
       'And',
       'That',
       'And a "b',
-      ],
+    ],
   ],
   'nothing': null,
-  }
+}
+"""
+
+EXPECTED3 = """[
+  1,
+  [
+    2,
+    [
+      3,
+      4,
+    ],
+    5,
+  ],
+  6,
+]
 """
