@@ -1,6 +1,8 @@
 import base64
 import os
 
+OPENING, CLOSING = '[{', ']}'
+
 
 def formatter(items, options, binary):
     quote = '"' if options.double_quote else "'"
@@ -26,14 +28,14 @@ def formatter(items, options, binary):
             else:
                 yield from ('a', quote, base64.b85decode(i).encode(), quote)
 
-        elif i in '[{':
+        elif i in OPENING:
             yield i
             if one_indent:
                 indent += one_indent
                 yield indent
 
-        elif i in ']}':
-            if trailing_commas and behind not in '[{':
+        elif i in CLOSING:
+            if trailing_commas and behind not in OPENING:
                 yield ',' + indent
             if one_indent:
                 indent = indent[:-options.indent]
