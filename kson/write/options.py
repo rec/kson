@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 import uuid
 
+NON_MARKER_CHARS = set(b'\'"\n\\')
+
 BINARY_MARKER = uuid.uuid4().bytes
-while any(i in BINARY_MARKER for i in b'"\''):
-    BINARY_MARKER = uuid.uuid4().bytes
+while not NON_MARKER_CHARS.isdisjoint(BINARY_MARKER):
+    BINARY_MARKER = uuid.uuid4().bytes  # pragma: no cover
 
 
 @dataclass

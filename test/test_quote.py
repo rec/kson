@@ -1,9 +1,9 @@
 from kson.read.unquote import unquote
-from kson.write.quote import single
-from kson.write.quote import single_ascii
 from kson.write.quote import double
 from kson.write.quote import double_ascii
 from kson.write.quote import quoter
+from kson.write.quote import single
+from kson.write.quote import single_ascii
 import unittest
 
 

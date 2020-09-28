@@ -1,5 +1,5 @@
-from kson.write.visitor import Visitor
 from kson.write.options import Options
+from kson.write.visitor import Visitor
 import math
 import unittest
 

@@ -73,7 +73,14 @@ class Decoder:
         return t
 
     def __call__(self, s):
-        return self._lark(not isinstance(s, str)).parser.parse(s)
+        if isinstance(s, str):
+            use_bytes = False
+        elif isinstance(s, (bytes, bytearray)):
+            use_bytes = True
+        else:
+            raise TypeError('Must be bytes, bytearray or str')
+
+        return self._lark(use_bytes).parser.parse(s)
 
 
 NAMES = [i for i in Decoder.__dict__ if not i.startswith('_')]

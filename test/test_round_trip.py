@@ -39,6 +39,29 @@ class RoundTripTest(unittest.TestCase):
         j3 = decoder.DECODER(s3)
         assert j2 == j3
 
+    def DONT_test_json_binary(self):
+        j = decoder.DECODER(TEST_JSON.encode())
+        assert j == json.loads(TEST_JSON)
+
+        s = writer.dumps(j)
+        j2 = decoder.DECODER(s)
+        assert j2 == j
+
+        s2 = writer.dumps(j2)
+        assert s == s2
+
+        assert s == EXPECTED.encode()
+
+        s3 = writer.dumps(j2, indent=2)
+
+        print('---')
+        print(s3)
+        print('---')
+
+        assert s3 == EXPECTED2.encode()
+        j3 = decoder.DECODER(s3)
+        assert j2 == j3
+
     def test_indent1(self):
         items = []
 
