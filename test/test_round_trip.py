@@ -3,21 +3,22 @@ from kson.write import writer
 import json
 import unittest
 
+TEST_JSON = """
+{
+    "empty_object" : {},
+    "empty_array"  : [],
+    "booleans"     : { "YES" : true, "NO" : false },
+    "numbers"      : [ 0, 1, -2, 3.3, 4.4e5, 6.6e-7 ],
+    "strings"      : [ "This", [ "And" , "That", "And a \\"b" ] ],
+    "nothing"      : null
+}
+"""
+
 
 class RoundTripTest(unittest.TestCase):
     def test_json(self):
-        test_json = """
-            {
-                "empty_object" : {},
-                "empty_array"  : [],
-                "booleans"     : { "YES" : true, "NO" : false },
-                "numbers"      : [ 0, 1, -2, 3.3, 4.4e5, 6.6e-7 ],
-                "strings"      : [ "This", [ "And" , "That", "And a \\"b" ] ],
-                "nothing"      : null
-            }
-        """
-        j = decoder.DECODER(test_json)
-        assert j == json.loads(test_json)
+        j = decoder.DECODER(TEST_JSON)
+        assert j == json.loads(TEST_JSON)
 
         s = writer.dumps(j)
         j2 = decoder.DECODER(s)
@@ -97,7 +98,8 @@ EXPECTED2 = """\
 }
 """
 
-EXPECTED3 = """[
+EXPECTED3 = """\
+[
   1,
   [
     2,
