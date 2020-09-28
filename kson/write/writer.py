@@ -1,6 +1,6 @@
-from . formatter import formatter
-from . options import Options
-from . visitor import Visitor
+from .formatter import formatter
+from .options import Options
+from .visitor import Visitor
 import io
 
 

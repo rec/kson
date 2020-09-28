@@ -1,4 +1,4 @@
-from . decoder import Decoder
+from .decoder import Decoder
 
 
 def decoder(
@@ -6,7 +6,7 @@ def decoder(
     parse_float=None,
     parse_int=None,
     parse_constant=None,
-    object_pairs_hook=None
+    object_pairs_hook=None,
 ):
     decoder = Decoder()
 

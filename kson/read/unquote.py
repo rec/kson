@@ -46,8 +46,9 @@ def unquote(s, strict=False):
         try:
             esc = s[end]
         except IndexError:
-            raise JSONDecodeError("Unterminated string starting at",
-                                  s, begin) from None
+            raise JSONDecodeError(
+                "Unterminated string starting at", s, begin
+            ) from None
         # If not a unicode escape sequence, must be in the lookup table
         if esc != 'u':
             try:
@@ -59,10 +60,10 @@ def unquote(s, strict=False):
         else:
             uni = decoder._decode_uXXXX(s, end)
             end += 5
-            if 0xd800 <= uni <= 0xdbff and s[end:end + 2] == '\\u':
+            if 0xD800 <= uni <= 0xDBFF and s[end : end + 2] == '\\u':
                 uni2 = decoder._decode_uXXXX(s, end + 1)
-                if 0xdc00 <= uni2 <= 0xdfff:
-                    uni = 0x10000 + (((uni - 0xd800) << 10) | (uni2 - 0xdc00))
+                if 0xDC00 <= uni2 <= 0xDFFF:
+                    uni = 0x10000 + (((uni - 0xD800) << 10) | (uni2 - 0xDC00))
                     end += 6
             char = chr(uni)
         _append(char)

@@ -1,5 +1,5 @@
-from pathlib import Path
 from lark import Lark
+from pathlib import Path
 
 GRAMMAR_DIR = Path(__file__).parents[2] / 'grammar'
 

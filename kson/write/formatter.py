@@ -38,7 +38,7 @@ def formatter(items, options, binary):
                 yield old_indent if ahead in CLOSING else indent
 
         elif i in CLOSING:
-            indent = indent[:-options.indent]
+            indent = indent[: -options.indent]
             if trailing_commas and behind not in OPENING:
                 yield ','
                 if options.indent:
@@ -51,7 +51,7 @@ def formatter(items, options, binary):
             if options.indent:
                 yield i
                 yield newline
-                yield indent[:-options.indent] if ahead in CLOSING else indent
+                yield indent[: -options.indent] if ahead in CLOSING else indent
             else:
                 yield item_separator
 

@@ -22,6 +22,7 @@ def single(s):
     Return a KSON representation of a Python string with
     single quotes, allowing arbitary Unicode characters
     """
+
     def replace(match):
         return ESCAPE_DCT[match.group(0)]
 
@@ -33,6 +34,7 @@ def single_ascii(s):
     Return an ASCII-only KSON representation of a Python string with
     single quotes
     """
+
     def replace(match):
         s = match.group(0)
         try:
@@ -44,8 +46,8 @@ def single_ascii(s):
             else:
                 # surrogate pair
                 n -= 0x10000
-                s1 = 0xd800 | ((n >> 10) & 0x3ff)
-                s2 = 0xdc00 | (n & 0x3ff)
+                s1 = 0xD800 | ((n >> 10) & 0x3FF)
+                s2 = 0xDC00 | (n & 0x3FF)
                 return '\\u{0:04x}\\u{1:04x}'.format(s1, s2)
 
     return "'" + ESCAPE_ASCII.sub(replace, s) + "'"
