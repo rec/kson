@@ -1,6 +1,8 @@
 from json import encoder
 import re
 
+# from ..read.to_bytes import to_bytes, compile_re
+
 ESCAPE = re.compile(encoder.ESCAPE.pattern.replace('"', "'"))
 ESCAPE_ASCII = re.compile(encoder.ESCAPE_ASCII.pattern.replace('"', "'"))
 ESCAPE_DCT = dict(encoder.ESCAPE_DCT)

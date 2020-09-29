@@ -25,14 +25,13 @@ class Decoder:
     def string(self, s):
         return unquote.unquote(s)
 
-    def astring(self, s):
+    def astring(self, s):  # SHOULD BE abytes!
         return base64.b85decode(s[2:-1])
 
-    def bstring(self, s):
-        v = s.value
-        tsize = 1 + v.index(v[1], 2)
-        assert v.endswith(v[1:tsize])
-        return v[tsize : -tsize + 1]
+    def bstring(self, s):  # bbytes!
+        tsize = 1 + s.index(s[1], 2)
+        assert s.endswith(s[1:tsize])
+        return s[tsize : -tsize + 1]
 
     def integer(self, i):
         return int(i)
@@ -66,10 +65,12 @@ class Decoder:
     def _transformer(self):
         def wrap(name):
             attr = getattr(self, name)
-            return lambda x: attr(*x)
+            return lambda x: attr(*(getattr(i, 'value', i) for i in x))
 
         t = lark.Transformer()
-        t.__dict__.update((name, wrap(name)) for name in NAMES)
+        for name in NAMES:
+            setattr(t, name, wrap(name))
+
         return t
 
     def __call__(self, s):

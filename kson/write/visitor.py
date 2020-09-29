@@ -82,7 +82,7 @@ class Visitor:
 
         first = True
         for k, v in items:
-            if not isinstance(k, str):
+            if not isinstance(k, (str, bytes)):
                 if self.options.skipkeys:
                     continue
                 raise TypeError('Keys must be strings')

@@ -21,7 +21,7 @@ def lark(transformer, use_bytes=False, grammar=None):
 
 
 def parser(transformer, use_bytes=False, grammar=None):
-    return lark(transformer, use_bytes, grammar).parser.parse
+    return lark(transformer, use_bytes, grammar).parse
 
 
 KSON_GRAMMAR = grammar('kson')

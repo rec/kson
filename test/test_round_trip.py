@@ -1,4 +1,5 @@
 from kson.read import decoder
+from kson.read import unquote
 from kson.write import writer
 import json
 import unittest
@@ -39,9 +40,15 @@ class RoundTripTest(unittest.TestCase):
         j3 = decoder.DECODER(s3)
         assert j2 == j3
 
-    def DONT_test_json_binary(self):
+    def test_json_binary(self):
+        test_json = '"\\"b"'
+        decoder.DECODER(test_json)
+        test_json = b'"\\"b"'
+        decoder.DECODER(test_json)
+
+    def DONT_test_json_binary_full(self):
         j = decoder.DECODER(TEST_JSON.encode())
-        assert j == json.loads(TEST_JSON)
+        assert j == unquote.to_bytes(json.loads(TEST_JSON))
 
         s = writer.dumps(j)
         j2 = decoder.DECODER(s)
