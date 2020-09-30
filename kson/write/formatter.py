@@ -4,7 +4,7 @@ import os
 OPENING, CLOSING = '[{', ']}'
 
 
-def formatter(items, options, binary):
+def formatter(items, options, use_bytes):
     quote = '"' if options.double_quote else "'"
     one_indent = options.indent * ' '
     marker = options.binary_marker
@@ -17,7 +17,7 @@ def formatter(items, options, binary):
 
     if options.separators:
         item_separator, key_separator = options.separators
-    elif binary:
+    elif use_bytes:
         item_separator, key_separator = ',', ':'
     else:
         item_separator, key_separator = ', ', ': '
@@ -25,7 +25,7 @@ def formatter(items, options, binary):
     for behind, i, ahead in _look_ahead_behind(items):
         old_indent = indent
         if not isinstance(i, str):
-            if binary:
+            if use_bytes:
                 yield from ('b', quote, marker, quote, i, quote, marker, quote)
             else:
                 yield from ('a', quote, base64.b85decode(i).encode(), quote)
@@ -63,7 +63,7 @@ def formatter(items, options, binary):
 
     if options.record_end is not None:
         yield options.record_end
-    elif not binary:
+    elif not use_bytes:
         yield os.linesep
 
 

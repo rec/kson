@@ -5,13 +5,13 @@ import io
 
 
 def write_items(items, fp, options):
-    binary = not hasattr(fp, 'newlines')
+    use_bytes = not hasattr(fp, 'newlines')
     written = 0
 
     for i in items:
         parts = Visitor(options).visit(i)
-        for part in formatter(parts, options, binary):
-            if binary and isinstance(part, str):
+        for part in formatter(parts, options, use_bytes):
+            if use_bytes and isinstance(part, str):
                 part = part.encode()
             written += fp.write(part)
 
@@ -25,7 +25,27 @@ def dump(obj, fp, **kwargs):
     return write_items([obj], fp, Options(**kwargs))
 
 
-def dumps(obj, binary=False, **kwargs):
-    fp = io.BytesIO() if binary else io.StringIO()
+def has_use_bytes(obj):
+    def contents(x):
+        if isinstance(x, list):
+            for i in x:
+                yield from contents(i)
+        if isinstance(x, dict):
+            for k, v in x.items():
+                yield from contents(k)
+                yield from contents(v)
+        yield x
+
+    for i in contents(obj):
+        if isinstance(i, str):
+            return False
+        if isinstance(i, (bytes, bytearray)):
+            return True
+
+
+def dumps(obj, use_bytes=None, **kwargs):
+    if use_bytes is None:
+        use_bytes = has_use_bytes(obj)
+    fp = io.BytesIO() if use_bytes else io.StringIO()
     dump(obj, fp, **kwargs)
     return fp.getvalue()

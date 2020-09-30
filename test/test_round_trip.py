@@ -1,5 +1,5 @@
 from kson.read import decoder
-from kson.read import unquote
+from kson.read import to_bytes
 from kson.write import writer
 import json
 import unittest
@@ -32,25 +32,37 @@ class RoundTripTest(unittest.TestCase):
 
         s3 = writer.dumps(j2, indent=2)
 
-        print('---')
+        print("---")
         print(s3)
-        print('---')
+        print("---")
 
         assert s3 == EXPECTED2
         j3 = decoder.DECODER(s3)
         assert j2 == j3
 
-    def test_json_binary(self):
+    def test_json_bytes(self):
         assert decoder.DECODER('"\\"b"') == '"b'
-        assert decoder.DECODER(b'true') is True
-        assert decoder.DECODER(b'[]') == []
-        assert decoder.DECODER(b'{}') == {}
-        assert decoder.DECODER(b"''") == b''
-        assert decoder.DECODER(b'""') == b''
+        assert decoder.DECODER(b"true") is True
+        assert decoder.DECODER(b"[]") == []
+        assert decoder.DECODER(b"{}") == {}
+        assert decoder.DECODER(b"''") == b""
+        assert decoder.DECODER(b'""') == b""
 
-    def DONT_test_json_binary_full(self):
+    def test_bytes_json(self):
+        expected = writer.dumps('"b', use_bytes=True, double_quote=True)
+        assert b'"\\"b"' == expected
+        assert b"true" == writer.dumps(True, use_bytes=True)
+        assert b"[]" == writer.dumps([], use_bytes=True)
+        assert b"{}" == writer.dumps({}, use_bytes=True)
+        assert b"''" != writer.dumps(b"", use_bytes=True)  # FIX
+        assert b'""' != writer.dumps(b"", use_bytes=True)
+
+    def test_json_bytes_XXX(self):
+        assert b'""' != writer.dumps(b"", use_bytes=True)
+
+    def NO_test_json_bytes_full(self):
         j = decoder.DECODER(TEST_JSON.encode())
-        assert j == unquote.to_bytes(json.loads(TEST_JSON))
+        assert j == to_bytes.to_bytes(json.loads(TEST_JSON))
 
         s = writer.dumps(j)
         j2 = decoder.DECODER(s)
@@ -63,9 +75,9 @@ class RoundTripTest(unittest.TestCase):
 
         s3 = writer.dumps(j2, indent=2)
 
-        print('---')
+        print("---")
         print(s3)
-        print('---')
+        print("---")
 
         assert s3 == EXPECTED2.encode()
         j3 = decoder.DECODER(s3)
@@ -75,13 +87,13 @@ class RoundTripTest(unittest.TestCase):
         items = []
 
         s = writer.dumps(items, indent=2)
-        assert s == '[\n]\n'
+        assert s == "[\n]\n"
 
     def test_indent2(self):
         items = [1]
 
         s = writer.dumps(items, indent=2)
-        assert s == '[\n  1,\n]\n'
+        assert s == "[\n  1,\n]\n"
 
     def test_indent3(self):
         items = [1, [2, [3, 4], 5], 6]

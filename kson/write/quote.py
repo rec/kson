@@ -1,12 +1,14 @@
 from ..read import quotes
-import functools
 
 
 def quoter(double_quote: bool = False, ensure_ascii: bool = False):
-    return functools.partial(
-        quote_ascii if ensure_ascii else quote_unicode,
-        quotes.get_quotes(double_quote),
-    )
+    do_quote = quote_ascii if ensure_ascii else quote_unicode
+
+    def quote(s):
+        quote = quotes.get_quotes(double_quote, not isinstance(s, str))
+        return do_quote(quote, s)
+
+    return quote
 
 
 def quote_unicode(quotes, s):
@@ -14,7 +16,6 @@ def quote_unicode(quotes, s):
     Return a KSON representation of a Python string with
     single quotes, allowing arbitary Unicode characters
     """
-    print('quote_unicode', quotes.escape_dict)
 
     def replace(match):
         return quotes.escape_dict[match.group(0)]

@@ -14,7 +14,6 @@ def unquote(s, strict=False):
 
 
 def _unquote_once(quotes, s, chunks, strict, end):
-    print(f'_unquote_once {quotes.quote=}, {s=}, {chunks=}, {strict=}, {end=}')
     chunk = quotes.string_chunk_re.match(s, end)
     if not chunk:
         raise JSONDecodeError("Unterminated string", str(s), end)
