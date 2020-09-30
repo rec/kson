@@ -1,18 +1,22 @@
 from kson.read.unquote import unquote
-from kson.write.quote import double
-from kson.write.quote import double_ascii
 from kson.write.quote import quoter
-from kson.write.quote import single
-from kson.write.quote import single_ascii
 import unittest
+
+single = quoter()
+single_ascii = quoter(ensure_ascii=True)
+double = quoter(double_quote=True)
+double_ascii = quoter(double_quote=True, ensure_ascii=True)
 
 
 def round_trip(quoter, raw, quoted):
     assert quoter(raw) == quoted
-    assert unquote(quoted) == raw
+    assert unquote(quoted) == raw, f'{quoted=}'
 
 
 class QuoteTest(unittest.TestCase):
+    def test_near_trivial(self):
+        assert unquote("'\\''") == "'"
+
     def test_empty(self):
         round_trip(single, '', "''")
         round_trip(single_ascii, '', "''")
@@ -25,7 +29,7 @@ class QuoteTest(unittest.TestCase):
         round_trip(double, ' ', '" "')
         round_trip(double_ascii, ' ', '" "')
 
-    def test_quote(self):
+    def test_quote1(self):
         round_trip(single, "'", "'\\''")
         round_trip(single_ascii, "'", "'\\''")
         round_trip(double, "'", '"\'"')

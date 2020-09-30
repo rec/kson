@@ -47,7 +47,7 @@ class Options:
 
     # These next parameters have the same meaning as in json.dump
     skipkeys: bool = False
-    ensure_ascii: bool = True
+    ensure_ascii: bool = False
     check_circular: bool = True
     allow_nan: bool = True
     indent: int = 0

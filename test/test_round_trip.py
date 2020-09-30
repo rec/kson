@@ -41,10 +41,12 @@ class RoundTripTest(unittest.TestCase):
         assert j2 == j3
 
     def test_json_binary(self):
-        test_json = '"\\"b"'
-        decoder.DECODER(test_json)
-        test_json = b'"\\"b"'
-        decoder.DECODER(test_json)
+        assert decoder.DECODER('"\\"b"') == '"b'
+        assert decoder.DECODER(b'true') is True
+        assert decoder.DECODER(b'[]') == []
+        assert decoder.DECODER(b'{}') == {}
+        assert decoder.DECODER(b"''") == b''
+        assert decoder.DECODER(b'""') == b''
 
     def DONT_test_json_binary_full(self):
         j = decoder.DECODER(TEST_JSON.encode())

@@ -7,10 +7,14 @@ SINGLE = "'"
 DOUBLE = '"'
 
 
-def quotes(s):
+def quotes(s: str):
     use_bytes = not isinstance(s, str)
-    is_single_quote = s[0] in {SINGLE, SINGLE.encode()}
-    return QUOTES[is_single_quote][use_bytes]
+    double_quote = s[:1] in {DOUBLE, DOUBLE.encode()}
+    return get_quotes(double_quote, use_bytes)
+
+
+def get_quotes(double_quote: bool = False, use_bytes: bool = False):
+    return QUOTES[double_quote][use_bytes]
 
 
 @dataclass
@@ -27,6 +31,8 @@ class Quotes:
     escape_re: re.Pattern = encoder.ESCAPE
     escape_ascii_re: re.Pattern = encoder.ESCAPE_ASCII
     escape_dict: dict = field(default_factory=encoder.ESCAPE_DCT.copy)
+    short_ascii: object = '\\u{0:04x}'
+    long_ascii: object = '\\u{0:04x}\\u{1:04x}'
 
 
 def to_single(quote):
@@ -40,7 +46,11 @@ def to_single(quote):
         elif isinstance(v, dict):
             v = dict(v)
             v.pop(DOUBLE)
-            v[SINGLE] = SINGLE
+            if k == 'escape_dict':
+                v[SINGLE] = quote.backslash + SINGLE
+            else:
+                assert k == 'backslash_dict'
+                v[SINGLE] = SINGLE
         else:
             raise TypeError
         setattr(u, k, v)
@@ -51,6 +61,6 @@ DOUBLE_QUOTES = Quotes()
 SINGLE_QUOTES = to_single(DOUBLE_QUOTES)
 
 QUOTES = (
-    (DOUBLE_QUOTES, to_bytes(DOUBLE_QUOTES)),
     (SINGLE_QUOTES, to_bytes(SINGLE_QUOTES)),
+    (DOUBLE_QUOTES, to_bytes(DOUBLE_QUOTES)),
 )

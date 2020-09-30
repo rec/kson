@@ -14,9 +14,10 @@ def unquote(s, strict=False):
 
 
 def _unquote_once(quotes, s, chunks, strict, end):
+    print(f'_unquote_once {quotes.quote=}, {s=}, {chunks=}, {strict=}, {end=}')
     chunk = quotes.string_chunk_re.match(s, end)
     if not chunk:
-        raise JSONDecodeError("Unterminated string", s)
+        raise JSONDecodeError("Unterminated string", str(s), end)
 
     (content, term), end = chunk.groups(), chunk.end()
     # Content is zero or more unescaped string characters
@@ -35,7 +36,7 @@ def _unquote_once(quotes, s, chunks, strict, end):
     try:
         esc = s[end : end + 1]
     except IndexError:
-        raise JSONDecodeError("Unterminated string", s) from None
+        raise JSONDecodeError("Unterminated string", str(s), end) from None
 
     # If not a unicode escape sequence, must be in the lookup table
     if esc != quotes.unicode_marker:
