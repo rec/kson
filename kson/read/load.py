@@ -10,8 +10,16 @@ def decoder(
 ):
     decoder = Decoder()
 
-    if object_hook:
-        decoder.object = object_hook
+    def object(*args):
+        args = dict(args)
+        if object_pairs_hook:
+            args = object_pairs_hook(args.items())
+        if object_hook:
+            args = object_hook(args)
+        return args
+
+    if object_hook or object_pairs_hook:
+        decoder.object = object
 
     if parse_float:
         decoder.floating = parse_float
@@ -23,9 +31,6 @@ def decoder(
         decoder.nan = lambda: parse_constant('NaN')
         decoder.inf = lambda: parse_constant('Infinity')
         decoder.minus_inf = lambda: parse_constant('-Infinity')
-
-    if object_pairs_hook:
-        decoder.key_value = object_pairs_hook
 
     return decoder
 

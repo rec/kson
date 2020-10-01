@@ -40,7 +40,7 @@ def loads_callbacks(loads, text):
 
 
 def load_all_callbacks(text, expected=None):
-    KSON_CALLBACKS_WORK = False
+    KSON_CALLBACKS_WORK = not False
 
     j1, callbacks1 = loads_callbacks(json.loads, text)
     if KSON_CALLBACKS_WORK:
