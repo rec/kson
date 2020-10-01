@@ -3,8 +3,8 @@
 ?value: object
       | array
       | string
-      | astring
-      | bstring
+      | abytes
+      | bbytes
       | integer
       | floating
       | false
@@ -23,13 +23,13 @@ string : STRING_SINGLE | STRING_DOUBLE
 STRING_DOUBLE : "\"" _STRING_ESC_INNER "\""
 STRING_SINGLE : "'" _STRING_ESC_INNER "'"
 
-astring : ASTRING_SINGLE | ASTRING_DOUBLE
-ASTRING_SINGLE : "a'" /.*?'/
-ASTRING_DOUBLE : "a\"" /.*?\"/
+abytes : ABYTES_SINGLE | ABYTES_DOUBLE
+ABYTES_SINGLE : "a'" /.*?'/
+ABYTES_DOUBLE : "a\"" /.*?\"/
 
-bstring : BSTRING_SINGLE | BSTRING_DOUBLE
-BSTRING_SINGLE : "b'" /(?P<KSON_TAG>.*?)'.*?'(?P=KSON_TAG)'/
-BSTRING_DOUBLE : "b\"" /(?P<KSON_TAG2>.*?)".*?\"(?P=KSON_TAG2)"/
+bbytes : BBYTES_SINGLE | BBYTES_DOUBLE
+BBYTES_SINGLE : "b'" /(?P<KSON_TAG>.*?)'.*?'(?P=KSON_TAG)'/
+BBYTES_DOUBLE : "b\"" /(?P<KSON_TAG2>.*?)".*?\"(?P=KSON_TAG2)"/
 
 integer: SIGNED_INT
 floating: SIGNED_FLOAT

@@ -25,10 +25,10 @@ class Decoder:
     def string(self, s):
         return unquote.unquote(s)
 
-    def astring(self, s):  # SHOULD BE abytes!
+    def abytes(self, s):
         return base64.b85decode(s[2:-1])
 
-    def bstring(self, s):  # bbytes!
+    def bbytes(self, s):
         tsize = 1 + s.index(s[1], 2)
         assert s.endswith(s[1:tsize])
         return s[tsize : -tsize + 1]
