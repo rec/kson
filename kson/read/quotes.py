@@ -36,13 +36,17 @@ class Quotes:
 
 
 def to_single(quote):
-    u = Quotes()
-    for k in quote.__dataclass_fields__:
-        v = getattr(quote, k)
+    q = {}
+    for k, v in vars(quote).items():
+        if k.startswith('_'):
+            continue
+
         if isinstance(v, str):
             v = v.replace(DOUBLE, SINGLE)
+
         elif isinstance(v, re.Pattern):
             v = compile_re(v.pattern.replace(DOUBLE, SINGLE))
+
         elif isinstance(v, dict):
             v = dict(v)
             v.pop(DOUBLE)
@@ -53,8 +57,10 @@ def to_single(quote):
                 v[SINGLE] = SINGLE
         else:
             raise TypeError
-        setattr(u, k, v)
-    return u
+
+        q[k] = v
+
+    return Quotes(**q)
 
 
 DOUBLE_QUOTES = Quotes()
