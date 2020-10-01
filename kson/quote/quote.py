@@ -12,11 +12,6 @@ def quoter(double_quote: bool = False, ensure_ascii: bool = False):
 
 
 def quote_unicode(quotes, s):
-    """
-    Return a KSON representation of a Python string with
-    single quotes, allowing arbitary Unicode characters
-    """
-
     def replace(match):
         return quotes.escape_dict[match.group(0)]
 
@@ -24,11 +19,6 @@ def quote_unicode(quotes, s):
 
 
 def quote_ascii(quotes, s):
-    """
-    Return an ASCII-only KSON representation of a Python string with
-    single quotes
-    """
-
     def replace(match):
         s = match.group(0)
         try:
