@@ -57,31 +57,13 @@ class RoundTripTest(unittest.TestCase):
         assert b"''" != writer.dumps(b"", use_bytes=True)  # FIX
         assert b'""' != writer.dumps(b"", use_bytes=True)
 
-    def test_json_bytes_XXX(self):
+    def test_json_bytes2(self):
         assert b'""' != writer.dumps(b"", use_bytes=True)
 
-    def NO_test_json_bytes_full(self):
+    def test_json_bytes_full(self):
         j = decoder.DECODER(TEST_JSON.encode())
-        # assert j == to_bytes.to_bytes(json.loads(TEST_JSON))
-
-        s = writer.dumps(j)
-        j2 = decoder.DECODER(s)
-        assert j2 == j
-
-        s2 = writer.dumps(j2)
-        assert s == s2
-
-        assert s == EXPECTED.encode()
-
-        s3 = writer.dumps(j2, indent=2)
-
-        print("---")
-        print(s3)
-        print("---")
-
-        assert s3 == EXPECTED2.encode()
-        j3 = decoder.DECODER(s3)
-        assert j2 == j3
+        j2 = json.loads(TEST_JSON)
+        assert j == j2
 
     def test_indent1(self):
         items = []
