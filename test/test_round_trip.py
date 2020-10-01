@@ -1,5 +1,5 @@
+from kson.quote import to_bytes
 from kson.read import decoder
-from kson.read import to_bytes
 from kson.write import writer
 import json
 import unittest

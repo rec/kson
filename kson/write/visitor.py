@@ -1,4 +1,4 @@
-from . import quote
+from ..quote import quote
 import functools
 import math
 

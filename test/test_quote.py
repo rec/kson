@@ -1,5 +1,5 @@
-from kson.read.unquote import unquote
-from kson.write.quote import quoter
+from kson.quote.quote import quoter
+from kson.quote.unquote import unquote
 import unittest
 
 single = quoter()

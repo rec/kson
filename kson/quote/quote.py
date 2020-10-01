@@ -1,4 +1,4 @@
-from ..read import quotes
+from . import quotes
 
 
 def quoter(double_quote: bool = False, ensure_ascii: bool = False):

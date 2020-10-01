@@ -1,5 +1,5 @@
 from . import parser
-from . import unquote
+from ..quote import unquote
 import base64
 import functools
 import lark
