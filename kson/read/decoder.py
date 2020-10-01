@@ -1,5 +1,5 @@
 from . import parser
-from ..quote import unquote
+from .. import quote
 import base64
 import functools
 import lark
@@ -7,8 +7,6 @@ import math
 
 
 class Decoder:
-    _ENFORCE_STRINGS = False
-
     def start(self, *args):
         return args
 
@@ -25,7 +23,7 @@ class Decoder:
         return list(args)
 
     def string(self, s):
-        return unquote.unquote(s)
+        return quote.unquote(s)
 
     def abytes(self, s):
         return base64.b85decode(s[2:-1])
@@ -66,22 +64,20 @@ class Decoder:
     @functools.lru_cache()
     def _transformer(self):
         t = lark.Transformer()
-        for name in NAMES:
-            setattr(t, name, _wrap(getattr(self, name)))
-
+        t.__dict__.update({k: _wrap(self, k) for k in NAMES})
         return t
 
     def __call__(self, s):
         return self._lark(_use_bytes(s)).parser.parse(s)
 
 
-def _wrap(method):
+def _wrap(obj, name):
+    method = getattr(obj, name)
+    encode = (lambda x: x) if name.endswith('bytes') else quote.encode
+
     @functools.wraps(method)
     def wrapped(x):
-        x = (getattr(i, 'value', i) for i in x)
-        if Decoder._ENFORCE_STRINGS:
-            x = [i if isinstance(i, str) else i.encode() for i in x]
-        return method(*x)
+        return method(*[encode(getattr(i, 'value', i)) for i in x])
 
     return wrapped
 
