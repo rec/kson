@@ -45,8 +45,8 @@ class RoundTripTest(unittest.TestCase):
         assert decoder.DECODER(b"true") is True
         assert decoder.DECODER(b"[]") == []
         assert decoder.DECODER(b"{}") == {}
-        assert decoder.DECODER(b"''") == b''
-        assert decoder.DECODER(b'""') == b''
+        assert decoder.DECODER(b"''") == ''
+        assert decoder.DECODER(b'""') == ''
 
     def test_bytes_json(self):
         expected = writer.dumps('"b', use_bytes=True, double_quote=True)
