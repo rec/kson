@@ -1,9 +1,12 @@
+from . import quotes
 from json import JSONDecodeError
+
+UNICODE_MARKER = 'u'
+SHORT_ASCII = '\\u{0:04x}',
+LONG_ASCII = '\\u{0:04x}\\u{1:04x}',
 
 
 def unquote(s, strict=False):
-    from . import quotes
-
     s = getattr(s, 'value', s)
     q = quotes.quotes(s)
     chunks = []
@@ -29,6 +32,30 @@ def _unquote_once(quotes, s, chunks, strict, end):
                 pass
         raise error('Invalid \\uXXXX escape')
 
+    def decode_ascii(esc, end):
+        try:
+            char = quotes.backslash_dict[esc]
+        except KeyError:
+            raise error('Invalid \\escape: {0!r}', esc) from None
+
+        chunks.append(char)
+        return end + 1
+
+    def decode_unicode(end):
+        uni = decode_uXXXX(end)
+        end += 5
+        ucode = '\\' + UNICODE_MARKER
+
+        if 0xD800 <= uni <= 0xDBFF and s[end : end + 2] == ucode:
+            uni2 = decode_uXXXX(end + 1)
+            if 0xDC00 <= uni2 <= 0xDFFF:
+                uni = 0x10000 + (((uni - 0xD800) << 10) | (uni2 - 0xDC00))
+                end += 6
+        char = chr(uni) if isinstance(s, str) else bytes([uni])
+        chunks.append(char)
+
+        return end
+
     chunk = quotes.string_chunk_re.match(s, end)
     if not chunk:
         raise error('Unterminated string')
@@ -44,7 +71,6 @@ def _unquote_once(quotes, s, chunks, strict, end):
         return
 
     end = chunk.end()
-
     if term != '\\':
         if strict:
             raise error('Invalid control character {0!r} at', term)
@@ -58,25 +84,6 @@ def _unquote_once(quotes, s, chunks, strict, end):
         raise error('Unterminated string') from None
 
     # If it's not a unicode escape sequence, it should be in the lookup table
-    if esc != quotes.unicode_marker:
-        try:
-            char = quotes.backslash_dict[esc]
-        except KeyError:
-            raise error('Invalid \\escape: {0!r}', esc) from None
-
-        chunks.append(char)
-        return end + 1
-
-    uni = decode_uXXXX(end)
-    end += 5
-    ucode = '\\' + quotes.unicode_marker
-
-    if 0xD800 <= uni <= 0xDBFF and s[end : end + 2] == ucode:
-        uni2 = decode_uXXXX(end + 1)
-        if 0xDC00 <= uni2 <= 0xDFFF:
-            uni = 0x10000 + (((uni - 0xD800) << 10) | (uni2 - 0xDC00))
-            end += 6
-    char = chr(uni) if isinstance(s, str) else bytes([uni])
-    chunks.append(char)
-
-    return end
+    if esc == UNICODE_MARKER:
+        return decode_unicode(end)
+    return decode_ascii(esc, end)
