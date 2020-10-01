@@ -7,6 +7,8 @@ import math
 
 
 class Decoder:
+    _ENFORCE_STRINGS = False
+
     def start(self, *args):
         return args
 
@@ -63,25 +65,32 @@ class Decoder:
 
     @functools.lru_cache()
     def _transformer(self):
-        def wrap(name):
-            attr = getattr(self, name)
-            return lambda x: attr(*(getattr(i, 'value', i) for i in x))
-
         t = lark.Transformer()
         for name in NAMES:
-            setattr(t, name, wrap(name))
+            setattr(t, name, _wrap(getattr(self, name)))
 
         return t
 
     def __call__(self, s):
-        if isinstance(s, str):
-            use_bytes = False
-        elif isinstance(s, (bytes, bytearray)):
-            use_bytes = True
-        else:
-            raise TypeError('Must be bytes, bytearray or str')
+        return self._lark(_use_bytes(s)).parser.parse(s)
 
-        return self._lark(use_bytes).parser.parse(s)
+
+def _wrap(method):
+    @functools.wraps(method)
+    def wrapped(x):
+        x = (getattr(i, 'value', i) for i in x)
+        if Decoder._ENFORCE_STRINGS:
+            x = [i if isinstance(i, str) else i.encode() for i in x]
+        return method(*x)
+
+    return wrapped
+
+
+def _use_bytes(s):
+    if isinstance(s, (bytes, bytearray)):
+        return True
+    if not isinstance(s, str):
+        raise TypeError('Must be bytes, bytearray or str')
 
 
 NAMES = [i for i in Decoder.__dict__ if not i.startswith('_')]
