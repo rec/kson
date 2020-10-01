@@ -5,7 +5,8 @@ def quoter(double_quote: bool = False, ensure_ascii: bool = False):
     do_quote = quote_ascii if ensure_ascii else quote_unicode
 
     def quote(s):
-        quote = quotes.get_quotes(double_quote, not isinstance(s, str))
+        assert isinstance(s, str)
+        quote = quotes.get_quotes(double_quote)
         return do_quote(quote, s)
 
     return quote

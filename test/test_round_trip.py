@@ -1,7 +1,7 @@
-from kson.quote import to_bytes
 from kson.read import decoder
 from kson.write import writer
 import json
+import json.decoder
 import unittest
 
 TEST_JSON = """
@@ -62,7 +62,7 @@ class RoundTripTest(unittest.TestCase):
 
     def NO_test_json_bytes_full(self):
         j = decoder.DECODER(TEST_JSON.encode())
-        assert j == to_bytes.to_bytes(json.loads(TEST_JSON))
+        # assert j == to_bytes.to_bytes(json.loads(TEST_JSON))
 
         s = writer.dumps(j)
         j2 = decoder.DECODER(s)

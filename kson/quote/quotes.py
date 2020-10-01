@@ -1,7 +1,9 @@
-from .to_bytes import to_bytes, compile_re
 from dataclasses import dataclass, field
 from json import decoder, encoder
+import functools
 import re
+
+compile_re = functools.partial(re.compile, flags=decoder.FLAGS)
 
 SINGLE = "'"
 DOUBLE = '"'
@@ -13,8 +15,8 @@ def quotes(s: str):
     return get_quotes(double_quote)
 
 
-def get_quotes(double_quote: bool = False, use_bytes: bool = False):
-    return QUOTES[double_quote][use_bytes]
+def get_quotes(double_quote: bool = False):
+    return QUOTES[double_quote]
 
 
 @dataclass
@@ -66,7 +68,4 @@ def to_single(quote):
 DOUBLE_QUOTES = Quotes()
 SINGLE_QUOTES = to_single(DOUBLE_QUOTES)
 
-QUOTES = (
-    (SINGLE_QUOTES, to_bytes(SINGLE_QUOTES)),
-    (DOUBLE_QUOTES, to_bytes(DOUBLE_QUOTES)),
-)
+QUOTES = SINGLE_QUOTES, DOUBLE_QUOTES
