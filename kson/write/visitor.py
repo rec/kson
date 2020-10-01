@@ -9,7 +9,7 @@ class Visitor:
         self.quote = quote.quoter(options.double_quote, options.ensure_ascii)
         self.options = options
 
-    def _visit(self, x):
+    def _check_circular(self, x):
         if self._visited is not None:
             i = id(x)
             if i in self._visited:
@@ -59,38 +59,31 @@ class Visitor:
 
     @visit.register
     def _(self, x: list):
-        self._visit(x)
+        self._check_circular(x)
         yield '['
 
-        first = True
         for item in x:
-            if first:
-                first = False
-            else:
-                yield ','
             yield from self.visit(item)
+            yield ','
         yield ']'
 
     @visit.register
     def _(self, x: dict):
-        self._visit(x)
+        self._check_circular(x)
         yield '{'
 
         items = x.items()
         if self.options.sort_keys:
             items = sorted(items)
 
-        first = True
         for k, v in items:
             if not isinstance(k, (str, bytes)):
                 if self.options.skipkeys:
                     continue
                 raise TypeError('Keys must be strings')
-            if first:
-                first = False
-            else:
-                yield ','
+
             yield self.quote(k)
             yield ':'
             yield from self.visit(v)
+            yield ','
         yield '}'

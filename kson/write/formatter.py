@@ -1,4 +1,5 @@
 import base64
+import itertools
 import os
 
 OPENING, CLOSING = '[{', ']}'
@@ -22,7 +23,7 @@ def formatter(items, options, use_bytes):
     else:
         item_separator, key_separator = ', ', ': '
 
-    for behind, i, ahead in _look_ahead_behind(items):
+    for i, ahead in _look_ahead(items):
         old_indent = indent
         if not isinstance(i, str):
             if use_bytes:
@@ -39,20 +40,16 @@ def formatter(items, options, use_bytes):
 
         elif i in CLOSING:
             indent = indent[: -options.indent]
-            if trailing_commas and behind not in OPENING:
-                yield ','
-                if options.indent:
-                    yield newline
-                    # yield old_indent if ahead in CLOSING else indent
-                    yield indent
             yield i
 
         elif i == ',':
+            keep = trailing_commas or ahead not in CLOSING
             if options.indent:
-                yield i
+                if keep:
+                    yield i
                 yield newline
                 yield indent[: -options.indent] if ahead in CLOSING else indent
-            else:
+            elif keep:
                 yield item_separator
 
         elif i == ':':
@@ -67,15 +64,10 @@ def formatter(items, options, use_bytes):
         yield os.linesep
 
 
-def _look_ahead_behind(it, none=''):
-    empty = it
-    behind = current = empty
-    for i in it:
-        if current is not empty:
-            if behind is empty:
-                behind = none
-            yield behind, current, i
-            behind = current
+def _look_ahead(it, none=''):
+    current = it
+
+    for i in itertools.chain(it, [none]):
+        if current is not it:
+            yield current, i
         current = i
-    if current is not empty:
-        yield behind, current, none
