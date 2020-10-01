@@ -8,9 +8,9 @@ DOUBLE = '"'
 
 
 def quotes(s: str):
-    use_bytes = not isinstance(s, str)
-    double_quote = s[:1] in {DOUBLE, DOUBLE.encode()}
-    return get_quotes(double_quote, use_bytes)
+    assert isinstance(s, str)
+    double_quote = s[0] == DOUBLE
+    return get_quotes(double_quote)
 
 
 def get_quotes(double_quote: bool = False, use_bytes: bool = False):
