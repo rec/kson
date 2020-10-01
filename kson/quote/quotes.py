@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from argparse import Namespace
 from json import decoder, encoder
 import functools
 import re
@@ -19,26 +19,8 @@ def get_quotes(double_quote: bool = False):
     return QUOTES[double_quote]
 
 
-@dataclass
-class Quotes:
-    quote: object = DOUBLE
-
-    # read
-    string_chunk_re: re.Pattern = decoder.STRINGCHUNK
-    backslash_dict: dict = field(default_factory=decoder.BACKSLASH.copy)
-    unicode_marker: object = 'u'
-
-    # write
-    escape_re: re.Pattern = encoder.ESCAPE
-    escape_ascii_re: re.Pattern = encoder.ESCAPE_ASCII
-    escape_dict: dict = field(default_factory=encoder.ESCAPE_DCT.copy)
-    short_ascii: object = '\\u{0:04x}'
-    long_ascii: object = '\\u{0:04x}\\u{1:04x}'
-
-
-def to_single(quote):
-    q = {}
-    for k, v in vars(quote).items():
+def _single():
+    for k, v in vars(DOUBLE_QUOTES).items():
         if k.startswith('_'):
             continue
 
@@ -57,14 +39,26 @@ def to_single(quote):
                 assert k == 'backslash_dict'
                 v[SINGLE] = SINGLE
         else:
-            raise TypeError
+            raise TypeError(f'{v=}, {type(v)=}')
 
-        q[k] = v
-
-    return Quotes(**q)
+        yield k, v
 
 
-DOUBLE_QUOTES = Quotes()
-SINGLE_QUOTES = to_single(DOUBLE_QUOTES)
+DOUBLE_QUOTES = Namespace(
+    quote=DOUBLE,
 
+    # read
+    string_chunk_re=decoder.STRINGCHUNK,
+    backslash_dict=decoder.BACKSLASH,
+    unicode_marker='u',
+
+    # write
+    escape_re=encoder.ESCAPE,
+    escape_ascii_re=encoder.ESCAPE_ASCII,
+    escape_dict=encoder.ESCAPE_DCT,
+    short_ascii='\\u{0:04x}',
+    long_ascii='\\u{0:04x}\\u{1:04x}',
+)
+
+SINGLE_QUOTES = Namespace(**dict(_single()))
 QUOTES = SINGLE_QUOTES, DOUBLE_QUOTES
