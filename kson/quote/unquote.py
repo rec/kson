@@ -45,7 +45,7 @@ def _unquote_once(quotes, s, chunks, strict, end):
 
     end = chunk.end()
 
-    if term != quotes.backslash:
+    if term != '\\':
         if strict:
             raise error('Invalid control character {0!r} at', term)
 
@@ -69,7 +69,7 @@ def _unquote_once(quotes, s, chunks, strict, end):
 
     uni = decode_uXXXX(end)
     end += 5
-    ucode = quotes.backslash + quotes.unicode_marker
+    ucode = '\\' + quotes.unicode_marker
 
     if 0xD800 <= uni <= 0xDBFF and s[end : end + 2] == ucode:
         uni2 = decode_uXXXX(end + 1)

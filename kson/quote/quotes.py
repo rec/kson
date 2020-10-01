@@ -22,7 +22,6 @@ def get_quotes(double_quote: bool = False):
 @dataclass
 class Quotes:
     quote: object = DOUBLE
-    backslash: object = "\\"
 
     # read
     string_chunk_re: re.Pattern = decoder.STRINGCHUNK
@@ -53,7 +52,7 @@ def to_single(quote):
             v = dict(v)
             v.pop(DOUBLE)
             if k == 'escape_dict':
-                v[SINGLE] = quote.backslash + SINGLE
+                v[SINGLE] = '\\' + SINGLE
             else:
                 assert k == 'backslash_dict'
                 v[SINGLE] = SINGLE
