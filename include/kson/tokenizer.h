@@ -11,7 +11,7 @@ using Span = std::pair<CharPtr, CharPtr>;
 template <typename Callback>
 void tokenize(Callback, Span);
 
-namespace tokens {
+namespace token {
 
 enum class State {
     between,
@@ -24,10 +24,10 @@ enum class State {
     emit
 };
 
-using StateChange = State(*)(State, Span&, char, char);
+using StateChange = State(*)(char, char);
 
 inline
-State between(char ch, char next) {
+State between(char ch, char) {
     if (isspace(ch))
         return State::between;
     if (ch == '\'')
@@ -41,11 +41,11 @@ State between(char ch, char next) {
 
 inline
 State word(char ch, char next) {
-    return isspace(next) ? State::emit : State::word;
+    return (isspace(ch) or isspace(next)) ? State::emit : State::word;
 }
 
 inline
-State singleQuote(char ch, char next) {
+State singleQuote(char ch, char) {
     if (ch == '\'')
         return State::emit;
     if (ch == '\\')
@@ -54,7 +54,7 @@ State singleQuote(char ch, char next) {
 }
 
 inline
-State doubleQuote(char ch, char next) {
+State doubleQuote(char ch, char) {
     if (ch == '"')
         return State::emit;
     if (ch == '\\')
@@ -63,30 +63,30 @@ State doubleQuote(char ch, char next) {
 }
 
 inline
-State singleBackslash(char ch, char next) {
+State singleBackslash(char, char) {
     return State::singleQuote;
 }
 
 inline
-State doubleBackslash(char ch, char next) {
+State doubleBackslash(char, char) {
     return State::doubleQuote;
 }
 
 inline
-State comment(char ch, char next) {
-    return (ch == '\n') ? State::emit : State::comment
+State comment(char ch, char) {
+    return (ch == '\n') ? State::emit : State::comment;
 }
 
 template <typename Callback>
 void tokenize(Callback callback, Span span) {
     static const StateChange CHANGES[] = {
-        between,
-        word,
-        singleQuote,
-        doubleQuote,
-        singleBackslash,
-        doubleBackslash,
-        comment
+        &between,
+        &word,
+        &singleQuote,
+        &doubleQuote,
+        &singleBackslash,
+        &doubleBackslash,
+        &comment
     };
 
     CharPtr token;
@@ -107,6 +107,13 @@ void tokenize(Callback callback, Span span) {
             state = State::between;
         }
     }
+}
+
+}  // namespace token
+
+template <typename Callback>
+void tokenize(Callback callback, Span span) {
+    token::tokenize(callback, span);
 }
 
 }  // namespace kson
