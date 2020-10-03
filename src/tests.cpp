@@ -1,5 +1,5 @@
 #include <vector>
-#include <kson/tokenizer.h>
+#include <kson/Tokenizer.h>
 
 #define CATCH_CONFIG_MAIN
 #include <catch/catch.hpp>
