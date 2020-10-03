@@ -50,4 +50,12 @@ TEST_CASE( "Tokenizer Double Quotes", "" ) {
     REQUIRE( results[1] == "\"wo\\\"rd\"" );
 }
 
+TEST_CASE( "Tokenizer Quote in word", "" ) {
+    auto results = runTest(" wo'rd'nes ");
+    REQUIRE( results.size() == 3 );
+    REQUIRE( results[0] == "wo");
+    REQUIRE( results[1] == "'rd'");
+    REQUIRE( results[2] == "nes");
+}
+
 }  // kson

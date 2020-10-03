@@ -59,8 +59,6 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
-#   $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
-
 
 .PHONY: clean
 

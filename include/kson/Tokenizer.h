@@ -2,11 +2,9 @@
 
 #include <ctype.h>
 #include <string>
+#include <kson/Types.h>
 
 namespace kson {
-
-using CharPtr = const char*;
-using Span = std::pair<CharPtr, CharPtr>;
 
 template <typename Callback>
 void tokenize(Callback, Span);
@@ -41,7 +39,8 @@ State between(char ch, char) {
 
 inline
 State word(char ch, char next) {
-    return (isspace(ch) or isspace(next)) ? State::emit : State::word;
+    auto emit = isspace(ch) or isspace(next) or next == '"' or next == '\'';
+    return emit ? State::emit : State::word;
 }
 
 inline
