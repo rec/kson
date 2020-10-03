@@ -1,5 +1,5 @@
+from kson.grammar.kson import UnexpectedCharacters
 from kson.read import decoder
-import lark
 import unittest
 
 parse = decoder.DECODER
@@ -40,7 +40,7 @@ class KsonParserTest(unittest.TestCase):
 
     def test_binary(self):
         test_json = '`marker`binary`marker`'
-        with self.assertRaises(lark.UnexpectedCharacters):
+        with self.assertRaises(UnexpectedCharacters):
             parse(test_json)
 
     def test_streaming(self):
@@ -53,7 +53,7 @@ class KsonParserTest(unittest.TestCase):
     def test_end_of_line(self):
         # THIS SHOULD FAIL!
         test_json = '{"long": "two\\\nparts"}'
-        with self.assertRaises(lark.UnexpectedCharacters):
+        with self.assertRaises(UnexpectedCharacters):
             parse(test_json)
 
     def test_astring(self):

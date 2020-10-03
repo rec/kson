@@ -1,8 +1,7 @@
-from . import parser
+from .. grammar import kson
 from .. import quote
 import base64
 import functools
-import lark
 import math
 
 
@@ -59,16 +58,20 @@ class Decoder:
 
     @functools.lru_cache()
     def _lark(self, use_bytes):
-        return parser.lark(self._transformer(), use_bytes)
+        tr = self._transformer()
+        if not use_bytes:
+            return kson.Lark_StandAlone(tr)
+
+        return kson.Lark._load_from_dict(BINARY, kson.MEMO, transformer=tr)
 
     @functools.lru_cache()
     def _transformer(self):
-        t = lark.Transformer()
+        t = kson.Transformer()
         t.__dict__.update({k: _wrap(self, k) for k in NAMES})
         return t
 
     def __call__(self, s):
-        return self._lark(_use_bytes(s)).parser.parse(s)
+        return self._lark(_is_bytes(s)).parser.parse(s)
 
 
 def _wrap(obj, name):
@@ -82,12 +85,24 @@ def _wrap(obj, name):
     return wrapped
 
 
-def _use_bytes(s):
+def _is_bytes(s):
     if isinstance(s, (bytes, bytearray)):
         return True
     if not isinstance(s, str):
         raise TypeError('Must be bytes, bytearray or str')
 
 
+def _use_bytes(d):
+    if isinstance(d, list):
+        return [_use_bytes(i) for i in d]
+    if isinstance(d, dict):
+        r = {}
+        for k, v in d.items():
+            r[k] = k == 'use_bytes' or _use_bytes(v)
+        return r
+    return d
+
+
+BINARY = _use_bytes(kson.DATA)
 NAMES = [i for i in Decoder.__dict__ if not i.startswith('_')]
 DECODER = Decoder()
