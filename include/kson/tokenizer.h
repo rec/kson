@@ -100,10 +100,15 @@ void tokenize(Callback callback, Span span) {
         auto ch = i[0];
         auto next = isEnd ? '\0' : i[1];
         auto stateChange = CHANGES[static_cast<int>(state)];
+
         state = stateChange(ch, next);
 
         if (isEnd or state == State::emit) {
-            callback({token, i + 1});
+            Span s{token, i + 1};
+            for (; s.first != s.second and isspace(s.first[0]); s.first++);
+            for (; s.first != s.second and isspace(s.second[-1]); s.second--);
+            if (s.first != s.second)
+                callback(s);
             state = State::between;
         }
     }
