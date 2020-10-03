@@ -1,6 +1,7 @@
+from kson.grammar.json import UnexpectedCharacters
+from kson.grammar.json import UnexpectedToken
 from kson.read.json import parse
 import json
-import lark
 import unittest
 
 
@@ -22,36 +23,36 @@ class JsonParserTest(unittest.TestCase):
     def test_quote_backquoted(self):
         assert parse(r'"he\"llo"') == 'he"llo'
         assert parse(r'"he\\\"llo"') == 'he\\\\\"llo'
-        with self.assertRaises(lark.UnexpectedCharacters):
+        with self.assertRaises(UnexpectedCharacters):
             parse(r'"he\\"llo"') == "he\"llo"
         assert parse(r'"he\\"') == r'he\\'
 
     def test_comma(self):
         for e in '[1,]', '[,1]', '[,1,]':
-            with self.assertRaises(lark.UnexpectedToken):
+            with self.assertRaises(UnexpectedToken):
                 parse(e)
 
     def test_comment(self):
         test_json = '{"hello": 1 # comment\n}'
-        with self.assertRaises(lark.UnexpectedCharacters):
+        with self.assertRaises(UnexpectedCharacters):
             parse(test_json)
 
     def test_single_quote(self):
         test_json = "'hello'"
-        with self.assertRaises(lark.UnexpectedCharacters):
+        with self.assertRaises(UnexpectedCharacters):
             parse(test_json)
 
     def test_binary(self):
         test_json = '`marker`binary`marker`'
-        with self.assertRaises(lark.UnexpectedCharacters):
+        with self.assertRaises(UnexpectedCharacters):
             parse(test_json)
 
     def test_streaming(self):
         test_json = '"hello" "hello"'
-        with self.assertRaises(lark.UnexpectedToken):
+        with self.assertRaises(UnexpectedToken):
             parse(test_json)
 
     def test_end_of_line(self):
         test_json = '{"long": "two\\\nparts"}'
-        with self.assertRaises(lark.UnexpectedCharacters):
+        with self.assertRaises(UnexpectedCharacters):
             parse(test_json)

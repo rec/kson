@@ -1,12 +1,10 @@
-from . import parser
-import lark
+from .. grammar import json
 import re
 
 DOUBLE_QUOTE_RE = re.compile(r'(?<!\\)(\\\\)*\\(")')
-JSON_GRAMMAR = parser.grammar('json')
 
 
-class JsonTransformer(lark.Transformer):
+class JsonTransformer(json.Transformer):
     def string(self, s):
         s = s[0]
         return DOUBLE_QUOTE_RE.sub(r'\1' + s[0], s[1:-1])
@@ -31,4 +29,4 @@ class JsonTransformer(lark.Transformer):
         return True
 
 
-parse = parser.parser(JsonTransformer(), grammar=JSON_GRAMMAR)
+parse = json.Lark_StandAlone(JsonTransformer()).parse
