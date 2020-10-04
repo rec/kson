@@ -8,6 +8,9 @@ source = kson
 fail_under = 50
 skip_covered = True
 
+omit =
+    kson/grammar/*
+
 exclude_lines =
     pragma: no cover
     if False:
