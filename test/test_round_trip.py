@@ -80,7 +80,7 @@ class RoundTripTest(unittest.TestCase):
         items = [1]
 
         s = writer.dumps(items, indent=2)
-        assert s == '[\n  1,\n]\n'
+        assert s == '[\n  1\n]\n'
 
     def test_indent3(self):
         items = [1, [2, [3, 4], 5], 6]
@@ -128,7 +128,7 @@ EXPECTED2 = """\
   ],
   "booleans": {
     "YES": true,
-    "NO": false,
+    "NO": false
   },
   "numbers": [
     0,
@@ -136,17 +136,17 @@ EXPECTED2 = """\
     -2,
     3.3,
     440000.0,
-    6.6e-07,
+    6.6e-07
   ],
   "strings": [
     "This",
     [
       "And",
       "That",
-      "And a \\"b",
-    ],
+      "And a \\"b"
+    ]
   ],
-  "nothing": null,
+  "nothing": null
 }
 """
 
@@ -157,10 +157,10 @@ EXPECTED3 = """\
     2,
     [
       3,
-      4,
+      4
     ],
-    5,
+    5
   ],
-  6,
+  6
 ]
 """

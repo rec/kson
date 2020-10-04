@@ -41,7 +41,7 @@ class Options:
     def __init__(
         self,
         record_end=None,
-        trailing_commas=None,
+        trailing_commas=False,
         single_quote=False,
         binary_marker=BINARY_MARKER,
         # These next parameters have the same meaning as in json.dump
