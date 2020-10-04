@@ -1,14 +1,12 @@
-from dataclasses import dataclass
 import uuid
 
-NON_MARKER_CHARS = set(b'\'"\n\\')
+NON_MARKER_CHARS = set(b"'\"\n\\")
 
 BINARY_MARKER = uuid.uuid4().bytes
 while not NON_MARKER_CHARS.isdisjoint(BINARY_MARKER):
     BINARY_MARKER = uuid.uuid4().bytes  # pragma: no cover
 
 
-@dataclass
 class Options:
     """
     ARGUMENTS
@@ -40,17 +38,32 @@ class Options:
       dictionaries will be sorted by key.
     """
 
-    record_end: str = None
-    trailing_commas: bool = None
-    double_quote: bool = False
-    binary_marker: bytes = BINARY_MARKER
+    def __init__(
+        self,
+        record_end=None,
+        trailing_commas=None,
+        double_quote=False,
+        binary_marker=BINARY_MARKER,
 
-    # These next parameters have the same meaning as in json.dump
-    skipkeys: bool = False
-    ensure_ascii: bool = False
-    check_circular: bool = True
-    allow_nan: bool = True
-    indent: int = 0
-    separators: object = None
-    default: object = None
-    sort_keys: bool = False
+        # These next parameters have the same meaning as in json.dump
+        skipkeys=False,
+        ensure_ascii=False,
+        check_circular=True,
+        allow_nan=True,
+        indent=0,
+        separators=None,
+        default=None,
+        sort_keys=False,
+    ):
+        self.record_end = record_end
+        self.trailing_commas = trailing_commas
+        self.double_quote = double_quote
+        self.binary_marker = binary_marker
+        self.skipkeys = skipkeys
+        self.ensure_ascii = ensure_ascii
+        self.check_circular = check_circular
+        self.allow_nan = allow_nan
+        self.indent = indent
+        self.separators = separators
+        self.default = default
+        self.sort_keys = sort_keys

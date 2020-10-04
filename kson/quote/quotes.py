@@ -22,7 +22,7 @@ def _single():
         if isinstance(v, str):
             v = v.replace(DOUBLE, SINGLE)
 
-        elif isinstance(v, re.Pattern):
+        elif hasattr(v, 'pattern'):
             v = compile_re(v.pattern.replace(DOUBLE, SINGLE))
 
         elif isinstance(v, dict):

@@ -16,74 +16,86 @@ class Visitor:
                 raise ValueError('Circular reference detected')
             self._visited.add(i)
 
-    @functools.singledispatchmethod
     def visit(self, x):
-        if self.options.default:
-            return self.options.default(x)
-        raise TypeError('Cannot visit %s' % type(x))
+        return _visit(x, self)
 
-    @visit.register
-    def _(self, x: type(None)):
-        yield 'null'
 
-    @visit.register
-    def _(self, x: bool):
-        yield 'true' if x else 'false'
+@functools.singledispatch
+def _visit(x, visitor):
+    if visitor.options.default:
+        return visitor.options.default(x)
+    raise TypeError('Cannot visit %s' % type(x))
 
-    @visit.register
-    def _(self, x: int):
-        yield repr(x)
 
-    @visit.register
-    def _(self, x: float):
-        if x != x:
-            f = 'nan'
-        elif x == math.inf:
-            f = 'inf'
-        elif x == -math.inf:
-            f = '-inf'
-        else:
-            return repr(x)
-        if self.options.allow_nan:
-            return f
-        raise ValueError('Out of range float value: %r' % x)
+@_visit.register(type(None))
+def _(x, visitor):
+    yield 'null'
 
-    @visit.register
-    def _(self, x: str):
-        yield self.quote(x)
 
-    @visit.register(bytes)
-    @visit.register(bytearray)
-    def _(self, x):
-        yield x
+@_visit.register(bool)
+def _(x, visitor):
+    yield 'true' if x else 'false'
 
-    @visit.register
-    def _(self, x: list):
-        self._check_circular(x)
-        yield '['
 
-        for item in x:
-            yield from self.visit(item)
-            yield ','
-        yield ']'
+@_visit.register(int)
+def _(x, visitor):
+    yield repr(x)
 
-    @visit.register
-    def _(self, x: dict):
-        self._check_circular(x)
-        yield '{'
 
-        items = x.items()
-        if self.options.sort_keys:
-            items = sorted(items)
+@_visit.register(float)
+def _(x, visitor):
+    if x != x:
+        f = 'nan'
+    elif x == math.inf:
+        f = 'inf'
+    elif x == -math.inf:
+        f = '-inf'
+    else:
+        return repr(x)
+    if visitor.options.allow_nan:
+        return f
+    raise ValueError('Out of range float value: %r' % x)
 
-        for k, v in items:
-            if not isinstance(k, (str, bytes)):
-                if self.options.skipkeys:
-                    continue
-                raise TypeError('Keys must be strings')
 
-            yield self.quote(k)
-            yield ':'
-            yield from self.visit(v)
-            yield ','
-        yield '}'
+@_visit.register(str)
+def _(x, visitor):
+    yield visitor.quote(x)
+
+
+@_visit.register(bytes)
+@_visit.register(bytearray)
+def _(x, visitor):
+    yield x
+
+
+@_visit.register(list)
+def _(x, visitor):
+    visitor._check_circular(x)
+    yield '['
+
+    for item in x:
+        yield from _visit(item, visitor)
+        yield ','
+    yield ']'
+
+
+@_visit.register(dict)
+def _(x, visitor):
+    visitor._check_circular(x)
+    yield '{'
+
+    items = x.items()
+    if visitor.options.sort_keys:
+        items = sorted(items)
+
+    for k, v in items:
+        if not isinstance(k, (str, bytes)):
+            if visitor.options.skipkeys:
+                continue
+            raise TypeError('Keys must be strings')
+
+        yield visitor.quote(k)
+        yield ':'
+        yield from _visit(v, visitor)
+        yield ','
+    yield '}'

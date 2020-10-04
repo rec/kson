@@ -10,7 +10,7 @@ double_ascii = quoter(double_quote=True, ensure_ascii=True)
 
 def round_trip(quoter, raw, quoted):
     assert quoter(raw) == quoted
-    assert unquote(quoted) == raw, f'{quoted=}'
+    assert unquote(quoted) == raw, quoted
 
 
 class QuoteTest(unittest.TestCase):
