@@ -49,15 +49,15 @@ class RoundTripTest(unittest.TestCase):
         assert j2 == j3
 
     def test_json_bytes(self):
-        round_trip('"b', '"\\"b"', '\'"b\'')
+        round_trip('"b', '\'"b\'', '"\\"b"')
         round_trip(True, b'true', 'true')
         round_trip([], b'[]', '[]')
         round_trip({}, b'{}', '{}')
-        round_trip('', b"''", "''")
-        round_trip('', b'""', "''")
+        round_trip('', b"''", '""')
+        round_trip('', b"''", '""')
 
     def test_bytes_json(self):
-        expected = writer.dumps('"b', use_bytes=True, single_quote=False)
+        expected = writer.dumps('"b', use_bytes=True)
         assert b'"\\"b"' == expected
         assert b'true' == writer.dumps(True, use_bytes=True)
         assert b'[]' == writer.dumps([], use_bytes=True)
@@ -98,15 +98,14 @@ class RoundTripTest(unittest.TestCase):
 
         assert b == b_bytes
         assert b != b_str
-        assert b == b"{'foo':b'ab'\x00\x01\x02\x03\x04\x05\x06\x07'ab'}"
-        assert b_str == "{'foo': a'009C61O)~M'}"
+        assert b == b'{"foo":b"ab"\x00\x01\x02\x03\x04\x05\x06\x07"ab"}'
+        assert b_str == '{"foo": a"009C61O)~M"}'
 
     def test_unicode_chars_1(self):
-        dumps = functools.partial(writer.dumps, single_quote=False)
         for uni in range(256):
-            u = dumps(uni)
-            u_ascii = dumps(uni, ensure_ascii=True)
-            u_no_ascii = dumps(uni, ensure_ascii=False)
+            u = kson.dumps(uni)
+            u_ascii = kson.dumps(uni, ensure_ascii=True)
+            u_no_ascii = kson.dumps(uni, ensure_ascii=False)
 
             assert u == u_no_ascii
             assert u_ascii == json.dumps(uni)
@@ -114,24 +113,24 @@ class RoundTripTest(unittest.TestCase):
 
 
 EXPECTED = """\
-{'empty_object': {}, \
-'empty_array': [], \
-'booleans': {'YES': true, 'NO': false}, \
-'numbers': [0, 1, -2, 3.3, 440000.0, 6.6e-07], \
-'strings': ['This', ['And', 'That', 'And a "b']], \
-'nothing': null}"""
+{"empty_object": {}, \
+"empty_array": [], \
+"booleans": {"YES": true, "NO": false}, \
+"numbers": [0, 1, -2, 3.3, 440000.0, 6.6e-07], \
+"strings": ["This", ["And", "That", "And a \\"b"]], \
+"nothing": null}"""
 
 EXPECTED2 = """\
 {
-  'empty_object': {
+  "empty_object": {
   },
-  'empty_array': [
+  "empty_array": [
   ],
-  'booleans': {
-    'YES': true,
-    'NO': false,
+  "booleans": {
+    "YES": true,
+    "NO": false,
   },
-  'numbers': [
+  "numbers": [
     0,
     1,
     -2,
@@ -139,15 +138,15 @@ EXPECTED2 = """\
     440000.0,
     6.6e-07,
   ],
-  'strings': [
-    'This',
+  "strings": [
+    "This",
     [
-      'And',
-      'That',
-      'And a "b',
+      "And",
+      "That",
+      "And a \\"b",
     ],
   ],
-  'nothing': null,
+  "nothing": null,
 }
 """
 

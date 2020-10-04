@@ -42,7 +42,7 @@ class Options:
         self,
         record_end=None,
         trailing_commas=None,
-        single_quote=True,
+        single_quote=False,
         binary_marker=BINARY_MARKER,
         # These next parameters have the same meaning as in json.dump
         skipkeys=False,

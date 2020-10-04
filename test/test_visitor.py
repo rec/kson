@@ -14,14 +14,14 @@ def visit(x, **kwargs):
 
 class VisitorTest(unittest.TestCase):
     def test_simple(self):
-        assert visit('') == "''"
-        assert visit('', single_quote=False) == '""'
+        assert visit('', single_quote=True) == "''"
+        assert visit('') == '""'
         assert visit(False) == 'false'
         assert visit(12) == '12'
         assert visit([]) == '[]'
         assert visit({}) == '{}'
         assert visit(23.5) == '23.5'
-        assert visit('hello') == "'hello'"
+        assert visit('hello') == '"hello"'
         assert visit(math.inf) == 'inf'
         assert visit(-math.inf) == '-inf'
         assert visit(math.nan) == 'nan'
@@ -29,13 +29,13 @@ class VisitorTest(unittest.TestCase):
     def test_list(self):
         assert visit([]) == '[]'
         assert visit([1]) == '[1,]'
-        assert visit([1, 'frog', {}]) == "[1,'frog',{},]"
+        assert visit([1, 'frog', {}]) == '[1,"frog",{},]'
 
     def test_dict(self):
         assert visit({}) == '{}'
-        assert visit({'one': 1}) == "{'one':1,}"
-        assert visit({'one': 1}, single_quote=False) == '{"one":1,}'
+        assert visit({'one': 1}, single_quote=True) == "{'one':1,}"
+        assert visit({'one': 1}) == '{"one":1,}'
 
     def test_bytes(self):
-        expected = ['{', "'one'", ':', b'1234', ',', '}']
+        expected = ['{', '"one"', ':', b'1234', ',', '}']
         assert visit_raw({'one': b'1234'}) == expected

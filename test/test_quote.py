@@ -2,10 +2,10 @@ from kson.quote.quote import quoter
 from kson.quote.unquote import unquote
 import unittest
 
-single = quoter()
-single_ascii = quoter(ensure_ascii=True)
-double = quoter(single_quote=False)
-double_ascii = quoter(single_quote=False, ensure_ascii=True)
+single = quoter(single_quote=True)
+single_ascii = quoter(single_quote=True, ensure_ascii=True)
+double = quoter()
+double_ascii = quoter(ensure_ascii=True)
 
 
 def round_trip(quoter, raw, quoted):
