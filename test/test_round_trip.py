@@ -3,6 +3,7 @@ from kson.write import writer
 import functools
 import json
 import json.decoder
+import kson
 import unittest
 
 TEST_JSON = """
@@ -15,6 +16,12 @@ TEST_JSON = """
     "nothing"      : null
 }
 """
+
+
+def round_trip(x, pre, post=None, **kwargs):
+    post = pre if post is None else post
+    assert kson.loads(pre) == x
+    assert kson.dumps(x, **kwargs) == post
 
 
 class RoundTripTest(unittest.TestCase):
@@ -33,32 +40,29 @@ class RoundTripTest(unittest.TestCase):
 
         s3 = writer.dumps(j2, indent=2)
 
-        print("---")
+        print('---')
         print(s3)
-        print("---")
+        print('---')
 
         assert s3 == EXPECTED2
         j3 = decoder.DECODER(s3)
         assert j2 == j3
 
     def test_json_bytes(self):
-        assert decoder.DECODER('"\\"b"') == '"b'
-        assert decoder.DECODER(b"true") is True
-        assert decoder.DECODER(b"[]") == []
-        assert decoder.DECODER(b"{}") == {}
-        assert decoder.DECODER(b"''") == ''
-        assert decoder.DECODER(b'""') == ''
+        round_trip('"b', '"\\"b"', '\'"b\'')
+        round_trip(True, b'true', 'true')
+        round_trip([], b'[]', '[]')
+        round_trip({}, b'{}', '{}')
+        round_trip('', b"''", "''")
+        round_trip('', b'""', "''")
 
     def test_bytes_json(self):
         expected = writer.dumps('"b', use_bytes=True, double_quote=True)
         assert b'"\\"b"' == expected
-        assert b"true" == writer.dumps(True, use_bytes=True)
-        assert b"[]" == writer.dumps([], use_bytes=True)
-        assert b"{}" == writer.dumps({}, use_bytes=True)
+        assert b'true' == writer.dumps(True, use_bytes=True)
+        assert b'[]' == writer.dumps([], use_bytes=True)
+        assert b'{}' == writer.dumps({}, use_bytes=True)
         assert b"''" != writer.dumps(b"", use_bytes=True)  # FIX
-        assert b'""' != writer.dumps(b"", use_bytes=True)
-
-    def test_json_bytes2(self):
         assert b'""' != writer.dumps(b"", use_bytes=True)
 
     def test_json_bytes_full(self):
@@ -70,13 +74,13 @@ class RoundTripTest(unittest.TestCase):
         items = []
 
         s = writer.dumps(items, indent=2)
-        assert s == "[\n]\n"
+        assert s == '[\n]\n'
 
     def test_indent2(self):
         items = [1]
 
         s = writer.dumps(items, indent=2)
-        assert s == "[\n  1,\n]\n"
+        assert s == '[\n  1,\n]\n'
 
     def test_indent3(self):
         items = [1, [2, [3, 4], 5], 6]
@@ -105,8 +109,8 @@ class RoundTripTest(unittest.TestCase):
             u_no_ascii = dumps(uni, ensure_ascii=False)
 
             assert u == u_no_ascii
-            assert u_ascii.rstrip() == json.dumps(uni)
-            assert u_no_ascii.rstrip() == json.dumps(uni, ensure_ascii=False)
+            assert u_ascii == json.dumps(uni)
+            assert u_no_ascii == json.dumps(uni, ensure_ascii=False)
 
 
 EXPECTED = """\
