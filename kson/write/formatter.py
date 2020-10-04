@@ -60,7 +60,7 @@ def formatter(items, options, use_bytes):
 
     if options.record_end is not None:
         yield options.record_end
-    elif not use_bytes:
+    elif not use_bytes and options.indent:
         yield os.linesep
 
 

@@ -95,7 +95,7 @@ class RoundTripTest(unittest.TestCase):
         assert b == b_bytes
         assert b != b_str
         assert b == b"{'foo':b'ab'\x00\x01\x02\x03\x04\x05\x06\x07'ab'}"
-        assert b_str == "{'foo': a'009C61O)~M'}\n"
+        assert b_str == "{'foo': a'009C61O)~M'}"
 
     def test_unicode_chars_1(self):
         dumps = functools.partial(writer.dumps, double_quote=True)
@@ -115,8 +115,7 @@ EXPECTED = """\
 'booleans': {'YES': true, 'NO': false}, \
 'numbers': [0, 1, -2, 3.3, 440000.0, 6.6e-07], \
 'strings': ['This', ['And', 'That', 'And a "b']], \
-'nothing': null}
-"""
+'nothing': null}"""
 
 EXPECTED2 = """\
 {
