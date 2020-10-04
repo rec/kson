@@ -1,3 +1,4 @@
+import functools
 from .decoder import Decoder
 
 
@@ -46,7 +47,7 @@ def loads(
 ):
     """
     Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance
-    containing a JSON document) to a Python object.
+    containing a KSON document) to a Python object.
 
     ``object_hook`` is an optional function that will be called with the
     result of any object literal decode (a ``dict``). The return value of
@@ -78,3 +79,12 @@ def loads(
         object_hook, parse_float, parse_int, parse_constant, object_pairs_hook
     )
     return d(s)
+
+
+@functools.wraps(loads)
+def load(fp, **kwargs):
+    """
+    Deserialize ``fp`` (a ``.read()``-supporting file-like object containing
+    a KSON document) to a Python object.
+    """
+    return loads(fp, **kwargs)
