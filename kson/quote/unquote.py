@@ -2,8 +2,6 @@ from . import quotes
 from json import JSONDecodeError
 
 UNICODE_MARKER = 'u'
-SHORT_ASCII = '\\u{0:04x}',
-LONG_ASCII = '\\u{0:04x}\\u{1:04x}',
 
 
 def unquote(s, strict=False):

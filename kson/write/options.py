@@ -44,7 +44,6 @@ class Options:
         trailing_commas=None,
         double_quote=False,
         binary_marker=BINARY_MARKER,
-
         # These next parameters have the same meaning as in json.dump
         skipkeys=False,
         ensure_ascii=False,

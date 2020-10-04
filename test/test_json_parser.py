@@ -19,6 +19,7 @@ class JsonParserTest(unittest.TestCase):
         """
         j = parse(test_json)
         import json
+
         assert j == json.loads(test_json)
 
     def test_quote_backquoted(self):

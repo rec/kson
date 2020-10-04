@@ -42,11 +42,9 @@ def _single():
 
 DOUBLE_QUOTES = Namespace(
     quote=DOUBLE,
-
     # read
     string_chunk_re=decoder.STRINGCHUNK,
     backslash_dict=decoder.BACKSLASH,
-
     # write
     escape_re=encoder.ESCAPE,
     escape_ascii_re=encoder.ESCAPE_ASCII,
