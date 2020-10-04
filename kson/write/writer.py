@@ -1,6 +1,7 @@
 from .formatter import formatter
 from .options import Options
 from .visitor import Visitor
+from .visited import visited
 import io
 
 
@@ -25,29 +26,25 @@ def dump(obj, fp, **kwargs):
     return write_items([obj], fp, Options(**kwargs))
 
 
-def needs_bytes(x, check, visited=None):
-    if check and visited is None:
-        visited = set()
-
+def needs_bytes(x, visit):
     if isinstance(x, bytes):
         return True
 
     if isinstance(x, list):
-        if check:
-            i = id(x)
-            if i in visited:
-                raise ValueError('Circular reference detected')
-            visited.add(i)
+        visit(x)
+        return any(needs_bytes(i, visit) for i in x)
 
     if isinstance(x, dict):
-        return any(needs_bytes(i, check, visited) for i in x.values())
+        visit(x)
+        return any(needs_bytes(i, visit) for i in x.values())
 
     return False
 
 
 def dumps(obj, use_bytes=None, **kwargs):
     if use_bytes is None:
-        use_bytes = needs_bytes(obj, kwargs.get('check_circular', True))
+        visit = visited(kwargs.get('check_circular', True))
+        use_bytes = needs_bytes(obj, visit)
     fp = io.BytesIO() if use_bytes else io.StringIO()
     dump(obj, fp, **kwargs)
     return fp.getvalue()
