@@ -29,7 +29,7 @@ def formatter(items, options, use_bytes):
             if use_bytes:
                 yield from ('b', quote, marker, quote, i, quote, marker, quote)
             else:
-                yield from ('a', quote, base64.b85decode(i).encode(), quote)
+                yield from ('a', quote, base64.b85encode(i).decode(), quote)
 
         elif i in OPENING:
             yield i

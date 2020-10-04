@@ -1,5 +1,6 @@
 from kson.read import decoder
 from kson.write import writer
+import functools
 import json
 import json.decoder
 import unittest
@@ -83,6 +84,29 @@ class RoundTripTest(unittest.TestCase):
         s = writer.dumps(items, indent=2)
 
         assert s == EXPECTED3
+
+    def test_binary_dump(self):
+        items = {'foo': bytes(range(8))}
+        dumps = functools.partial(writer.dumps, items, binary_marker=b'ab')
+        b = dumps()
+        b_bytes = dumps(use_bytes=True)
+        b_str = dumps(use_bytes=False)
+
+        assert b == b_bytes
+        assert b != b_str
+        assert b == b"{'foo':b'ab'\x00\x01\x02\x03\x04\x05\x06\x07'ab'}"
+        assert b_str == "{'foo': a'009C61O)~M'}\n"
+
+    def test_unicode_chars_1(self):
+        dumps = functools.partial(writer.dumps, double_quote=True)
+        for uni in range(256):
+            u = dumps(uni)
+            u_ascii = dumps(uni, ensure_ascii=True)
+            u_no_ascii = dumps(uni, ensure_ascii=False)
+
+            assert u == u_no_ascii
+            assert u_ascii.rstrip() == json.dumps(uni)
+            assert u_no_ascii.rstrip() == json.dumps(uni, ensure_ascii=False)
 
 
 EXPECTED = """\

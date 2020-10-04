@@ -25,27 +25,22 @@ def dump(obj, fp, **kwargs):
     return write_items([obj], fp, Options(**kwargs))
 
 
-def has_use_bytes(obj):
-    def contents(x):
-        if isinstance(x, list):
-            for i in x:
-                yield from contents(i)
-        if isinstance(x, dict):
-            for k, v in x.items():
-                yield from contents(k)
-                yield from contents(v)
-        yield x
+def needs_bytes(x):
+    if isinstance(x, bytes):
+        return True
 
-    for i in contents(obj):
-        if isinstance(i, str):
-            return False
-        if isinstance(i, (bytes, bytearray)):
-            return True
+    if isinstance(x, list):
+        return any(needs_bytes(i) for i in x)
+
+    if isinstance(x, dict):
+        return any(needs_bytes(i) for i in x.values())
+
+    return False
 
 
 def dumps(obj, use_bytes=None, **kwargs):
     if use_bytes is None:
-        use_bytes = has_use_bytes(obj)
+        use_bytes = needs_bytes(obj)
     fp = io.BytesIO() if use_bytes else io.StringIO()
     dump(obj, fp, **kwargs)
     return fp.getvalue()

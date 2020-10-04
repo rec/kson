@@ -16,16 +16,14 @@ def quotes(s: str):
 
 def _single():
     for k, v in vars(DOUBLE_QUOTES).items():
-        if k.startswith('_'):
-            continue
-
         if isinstance(v, str):
             v = v.replace(DOUBLE, SINGLE)
 
         elif hasattr(v, 'pattern'):
             v = compile_re(v.pattern.replace(DOUBLE, SINGLE))
 
-        elif isinstance(v, dict):
+        else:
+            assert isinstance(v, dict)
             v = dict(v)
             v.pop(DOUBLE)
             if k == 'escape_dict':
@@ -33,9 +31,6 @@ def _single():
             else:
                 assert k == 'backslash_dict'
                 v[SINGLE] = SINGLE
-
-        else:
-            raise TypeError
 
         yield k, v
 
