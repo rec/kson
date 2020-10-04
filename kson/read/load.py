@@ -1,5 +1,5 @@
-import functools
 from .decoder import Decoder
+import functools
 
 
 def decoder(

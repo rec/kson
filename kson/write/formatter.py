@@ -11,10 +11,6 @@ def formatter(items, options, use_bytes):
     marker = options.binary_marker
     newline = '\n'
     indent = ''
-    if options.trailing_commas is not None:
-        trailing_commas = options.trailing_commas
-    else:
-        trailing_commas = bool(options.indent)
 
     if options.separators:
         item_separator, key_separator = options.separators
@@ -43,7 +39,7 @@ def formatter(items, options, use_bytes):
             yield i
 
         elif i == ',':
-            keep = trailing_commas or ahead not in CLOSING
+            keep = options.trailing_commas or ahead not in CLOSING
             if options.indent:
                 if keep:
                     yield i

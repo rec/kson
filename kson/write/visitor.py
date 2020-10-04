@@ -1,3 +1,4 @@
+from . visited import visited
 from ..quote import quote
 import functools
 import math
@@ -5,16 +6,9 @@ import math
 
 class Visitor:
     def __init__(self, options):
-        self._visited = set() if options.check_circular else None
+        self._check_circular = visited(options.check_circular)
         self.quote = quote.quoter(options.single_quote, options.ensure_ascii)
         self.options = options
-
-    def _check_circular(self, x):
-        if self._visited is not None:
-            i = id(x)
-            if i in self._visited:
-                raise ValueError('Circular reference detected')
-            self._visited.add(i)
 
     def visit(self, x):
         return _visit(x, self)

@@ -22,6 +22,8 @@ def round_trip(x, pre, post=None, **kwargs):
     post = pre if post is None else post
     assert kson.loads(pre) == x
     assert kson.dumps(x, **kwargs) == post
+    if not kwargs:
+        assert json.dumps(x) == post
 
 
 class RoundTripTest(unittest.TestCase):
@@ -69,6 +71,10 @@ class RoundTripTest(unittest.TestCase):
         j = decoder.DECODER(TEST_JSON.encode())
         j2 = json.loads(TEST_JSON)
         assert j == j2
+
+    def test_separators_and_end(self):
+        round_trip({'one': 1, 'two': 2}, '{"one" : 1 , "two" : 2}\n\n',
+                   separators=(' , ', ' : '), record_end='\n\n')
 
     def test_indent1(self):
         items = []

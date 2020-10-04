@@ -1,5 +1,6 @@
 from kson.grammar.kson import UnexpectedCharacters
 from kson.read import decoder
+import kson
 import unittest
 
 parse = decoder.DECODER
@@ -81,3 +82,23 @@ class KsonParserTest(unittest.TestCase):
         for i in 'NAN', 'nAn', 'Inf', 'infinity', '--inf':
             with self.assertRaises(Exception):
                 parse(i)
+
+        for i in 'nan', 'NaN', 'inf', 'Infinity', '-inf', '-Infinity':
+            x = kson.loads(i)
+            s = kson.dumps(x)
+            assert s
+            with self.assertRaises(ValueError):
+                kson.dumps(x, allow_nan=False)
+
+    def test_find_circular_reference(self):
+        a = [1]
+        a.append(a)
+        with self.assertRaises(ValueError) as m:
+            kson.dumps(a)
+        assert m.exception.args[0] == 'Circular reference detected'
+
+    def test_allow_circular_reference(self):
+        a = [1]
+        a.append(a)
+        with self.assertRaises(RecursionError):
+            kson.dumps(a, check_circular=False)

@@ -25,22 +25,29 @@ def dump(obj, fp, **kwargs):
     return write_items([obj], fp, Options(**kwargs))
 
 
-def needs_bytes(x):
+def needs_bytes(x, check, visited=None):
+    if check and visited is None:
+        visited = set()
+
     if isinstance(x, bytes):
         return True
 
     if isinstance(x, list):
-        return any(needs_bytes(i) for i in x)
+        if check:
+            i = id(x)
+            if i in visited:
+                raise ValueError('Circular reference detected')
+            visited.add(i)
 
     if isinstance(x, dict):
-        return any(needs_bytes(i) for i in x.values())
+        return any(needs_bytes(i, check, visited) for i in x.values())
 
     return False
 
 
 def dumps(obj, use_bytes=None, **kwargs):
     if use_bytes is None:
-        use_bytes = needs_bytes(obj)
+        use_bytes = needs_bytes(obj, kwargs.get('check_circular', True))
     fp = io.BytesIO() if use_bytes else io.StringIO()
     dump(obj, fp, **kwargs)
     return fp.getvalue()
