@@ -11,7 +11,7 @@ DOUBLE = '"'
 
 def quotes(s: str):
     assert isinstance(s, str)
-    return QUOTES[s[0] == DOUBLE]
+    return QUOTES[s[0] == SINGLE]
 
 
 def _single():
@@ -47,4 +47,4 @@ DOUBLE_QUOTES = Namespace(
 )
 
 SINGLE_QUOTES = Namespace(**dict(_single()))
-QUOTES = SINGLE_QUOTES, DOUBLE_QUOTES
+QUOTES = DOUBLE_QUOTES, SINGLE_QUOTES

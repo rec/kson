@@ -4,8 +4,8 @@ SHORT_ASCII = '\\u{0:04x}'
 LONG_ASCII = '\\u{0:04x}\\u{1:04x}'
 
 
-def quoter(double_quote: bool = False, ensure_ascii: bool = False):
-    q = quotes.QUOTES[double_quote]
+def quoter(single_quote=True, ensure_ascii=False):
+    q = quotes.QUOTES[single_quote]
 
     def quote(s):
         def replace_unicode(match):

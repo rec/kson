@@ -15,7 +15,7 @@ def visit(x, **kwargs):
 class VisitorTest(unittest.TestCase):
     def test_simple(self):
         assert visit('') == "''"
-        assert visit('', double_quote=True) == '""'
+        assert visit('', single_quote=False) == '""'
         assert visit(False) == 'false'
         assert visit(12) == '12'
         assert visit([]) == '[]'
@@ -34,7 +34,7 @@ class VisitorTest(unittest.TestCase):
     def test_dict(self):
         assert visit({}) == '{}'
         assert visit({'one': 1}) == "{'one':1,}"
-        assert visit({'one': 1}, double_quote=True) == '{"one":1,}'
+        assert visit({'one': 1}, single_quote=False) == '{"one":1,}'
 
     def test_bytes(self):
         expected = ['{', "'one'", ':', b'1234', ',', '}']

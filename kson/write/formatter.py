@@ -6,7 +6,7 @@ OPENING, CLOSING = '[{', ']}'
 
 
 def formatter(items, options, use_bytes):
-    quote = '"' if options.double_quote else "'"
+    quote = "'" if options.single_quote else '"'
     one_indent = options.indent * ' '
     marker = options.binary_marker
     newline = '\n'

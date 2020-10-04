@@ -6,7 +6,7 @@ import math
 class Visitor:
     def __init__(self, options):
         self._visited = set() if options.check_circular else None
-        self.quote = quote.quoter(options.double_quote, options.ensure_ascii)
+        self.quote = quote.quoter(options.single_quote, options.ensure_ascii)
         self.options = options
 
     def _check_circular(self, x):

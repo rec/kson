@@ -4,8 +4,8 @@ import unittest
 
 single = quoter()
 single_ascii = quoter(ensure_ascii=True)
-double = quoter(double_quote=True)
-double_ascii = quoter(double_quote=True, ensure_ascii=True)
+double = quoter(single_quote=False)
+double_ascii = quoter(single_quote=False, ensure_ascii=True)
 
 
 def round_trip(quoter, raw, quoted):
@@ -66,7 +66,7 @@ class QuoteTest(unittest.TestCase):
         round_trip(double_ascii, '🔑', '"\\ud83d\\udd11"')
 
     def test_quoter(self):
-        round_trip(quoter(False, False), '🔑', "'🔑'")
-        round_trip(quoter(False, True), '🔑', "'\\ud83d\\udd11'")
-        round_trip(quoter(True, False), '🔑', '"🔑"')
-        round_trip(quoter(True, True), '🔑', '"\\ud83d\\udd11"')
+        round_trip(quoter(True, False), '🔑', "'🔑'")
+        round_trip(quoter(True, True), '🔑', "'\\ud83d\\udd11'")
+        round_trip(quoter(False, False), '🔑', '"🔑"')
+        round_trip(quoter(False, True), '🔑', '"\\ud83d\\udd11"')

@@ -57,7 +57,7 @@ class RoundTripTest(unittest.TestCase):
         round_trip('', b'""', "''")
 
     def test_bytes_json(self):
-        expected = writer.dumps('"b', use_bytes=True, double_quote=True)
+        expected = writer.dumps('"b', use_bytes=True, single_quote=False)
         assert b'"\\"b"' == expected
         assert b'true' == writer.dumps(True, use_bytes=True)
         assert b'[]' == writer.dumps([], use_bytes=True)
@@ -102,7 +102,7 @@ class RoundTripTest(unittest.TestCase):
         assert b_str == "{'foo': a'009C61O)~M'}"
 
     def test_unicode_chars_1(self):
-        dumps = functools.partial(writer.dumps, double_quote=True)
+        dumps = functools.partial(writer.dumps, single_quote=False)
         for uni in range(256):
             u = dumps(uni)
             u_ascii = dumps(uni, ensure_ascii=True)
