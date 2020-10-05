@@ -7,11 +7,14 @@ import math
 class Visitor:
     def __init__(self, options):
         self._check_circular = visited(options.check_circular)
-        self.quote = quote.Quote(options.single_quote).add
+        self._quote = quote.Quote(options.single_quote)
         self.options = options
 
     def visit(self, x):
         return _visit(x, self)
+
+    def quote(self, x):
+        return self._quote.add(x, self.options.ensure_ascii)
 
 
 @functools.singledispatch
