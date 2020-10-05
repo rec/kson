@@ -10,18 +10,15 @@ class Visitor:
         self.quote = quote.Quote(options.single_quote).add
         self.options = options
 
-    def quote(self, s):
-        return self.quote.add(s, self.options.ensure_ascii)
-
     def visit(self, x):
         return _visit(x, self)
 
 
 @functools.singledispatch
 def _visit(x, visitor):
-    if visitor.options.default:
-        return visitor.options.default(x)
-    raise TypeError('Cannot visit %s' % type(x))
+    if not visitor.options.default:
+        raise TypeError('Cannot visit %s' % type(x))
+    yield visitor.options.default(x)
 
 
 @_visit.register(type(None))

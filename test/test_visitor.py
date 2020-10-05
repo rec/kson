@@ -1,6 +1,8 @@
 from kson.write.options import Options
 from kson.write.visitor import Visitor
 import math
+import random
+import string
 import unittest
 
 
@@ -39,3 +41,33 @@ class VisitorTest(unittest.TestCase):
     def test_bytes(self):
         expected = ['{', '"one"', ':', b'1234', ',', '}']
         assert visit_raw({'one': b'1234'}) == expected
+
+    def test_default_error(self):
+        with self.assertRaises(TypeError) as m:
+            visit(self)
+        expected = "Cannot visit <class 'test.test_visitor.VisitorTest'>"
+        assert m.exception.args[0] == expected
+
+    def test_default_ok(self):
+        actual, = visit_raw(self, default=lambda x: x)
+        assert actual is self
+
+    def test_skipkeys_error(self):
+        with self.assertRaises(TypeError) as m:
+            visit({self: True, 'a': 1})
+        assert m.exception.args[0] == 'Keys must be strings'
+
+    def test_skipkeys_ok(self):
+        actual = visit({self: True, 'a': 1}, skipkeys=True)
+        assert actual == '{"a":1,}'
+
+    def test_sortkeys(self):
+        lower = list(string.ascii_lowercase[:12])
+        random.shuffle(lower)
+        source = {k: i for i, k in enumerate(lower)}
+        v1 = visit(source)
+        v2 = visit(source, sort_keys=True)
+        assert v1 != v2
+
+        actual = ''.join(k for k in v2 if k in lower)
+        assert actual == 'abcdefghijkl'
