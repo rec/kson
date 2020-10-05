@@ -1,9 +1,12 @@
-from . import quote
-from . import quotes
-from .unquote import unquote
+from . import quote  # noqa: F401
+from . import quotes  # noqa: F401
+from . quote import quoter   # noqa: F401
+from . unquote import unquote  # noqa: F401
 
-assert quote and quotes and unquote
+
+def is_bin(s):
+    return isinstance(s, (bytearray, bytes))
 
 
 def encode(s):
-    return s.decode() if isinstance(s, bytes) else s
+    return s.decode() if is_bin(s) else s

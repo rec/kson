@@ -1,7 +1,7 @@
 from .formatter import formatter
 from .options import Options
-from .visitor import Visitor
 from .visited import visited
+from .visitor import Visitor
 import io
 
 
@@ -27,7 +27,7 @@ def dump(obj, fp, **kwargs):
 
 
 def needs_bytes(x, visit):
-    if isinstance(x, bytes):
+    if isinstance(x, (bytearray, bytes)):
         return True
 
     if isinstance(x, list):

@@ -86,7 +86,7 @@ def _wrap(obj, name):
 
 
 def _is_bytes(s):
-    if isinstance(s, (bytes, bytearray)):
+    if quote.is_bin(s):
         return True
     if not isinstance(s, str):
         raise TypeError('Must be bytes, bytearray or str')

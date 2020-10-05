@@ -1,5 +1,5 @@
 from . visited import visited
-from ..quote import quote
+from .. import quote
 import functools
 import math
 
@@ -56,8 +56,8 @@ def _(x, visitor):
     yield visitor.quote(x)
 
 
-@_visit.register(bytes)
 @_visit.register(bytearray)
+@_visit.register(bytes)
 def _(x, visitor):
     yield x
 
