@@ -1,4 +1,5 @@
 from .test_round_trip import TEST_JSON
+import io
 import json
 import kson
 import math
@@ -105,8 +106,9 @@ class LoadTest(unittest.TestCase):
         assert rest_j2 == rest_k2
         assert callbacks_j == callbacks_k
 
-
-TEST_JSON2 = """{}"""
+    def test_stream(self):
+        fp = io.StringIO('[1, 2, 3]')
+        assert kson.load(fp) == [1, 2, 3]
 
 
 EXPECTED = [
