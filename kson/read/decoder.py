@@ -1,5 +1,5 @@
 from .. grammar import kson
-from .. quote import quote as _quote
+from .. import quote as _quote
 import base64
 import functools
 import math

@@ -1,4 +1,4 @@
-from kson.quote import quote
+from kson import quote
 import functools
 import unittest
 

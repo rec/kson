@@ -1,5 +1,5 @@
 from . visited import visited
-from .. quote import quote
+from .. import quote
 import functools
 import math
 
