@@ -1,6 +1,12 @@
-from kson.quote import quoter
-from kson.quote.quote import unquote
+from kson.quote import quote
+import functools
 import unittest
+
+
+def quoter(single_quote=False, ensure_ascii=False):
+    q = quote.Quote(single_quote)
+    return functools.partial(q.add, ensure_ascii=ensure_ascii)
+
 
 single = quoter(single_quote=True)
 single_ascii = quoter(single_quote=True, ensure_ascii=True)
@@ -10,12 +16,12 @@ double_ascii = quoter(ensure_ascii=True)
 
 def round_trip(quoter, raw, quoted):
     assert quoter(raw) == quoted
-    assert unquote(quoted) == raw, quoted
+    assert quote.unquote(quoted) == raw, quoted
 
 
 class QuoteTest(unittest.TestCase):
     def test_near_trivial(self):
-        assert unquote("'\\''") == "'"
+        assert quote.unquote("'\\''") == "'"
 
     def test_empty(self):
         round_trip(single, '', "''")

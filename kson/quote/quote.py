@@ -1,12 +1,11 @@
 from . import tables
 from . unquote import unquote as _unquote
-import functools
 
 SHORT_ASCII = '\\u{0:04x}'
 LONG_ASCII = '\\u{0:04x}\\u{1:04x}'
 
 
-class Quote:
+class _Quote:
     def __init__(self, table):
         for k, v in table.items():
             setattr(self, k, v)
@@ -19,7 +18,7 @@ class Quote:
 
         return self.quote + re.sub(replace, s) + self.quote
 
-    def unquote(self, s, strict=False):
+    def remove(self, s, strict=False):
         return _unquote(self, s, strict)
 
     def _replace_unicode(self, match):
@@ -43,17 +42,12 @@ class Quote:
         return LONG_ASCII.format(s1, s2)
 
 
+def Quote(b):
+    return _QUOTES[bool(b)]
+
+
 def unquote(s, strict=True):
-    return QUOTES[s[0] == tables.SINGLE].unquote(s, strict)
+    return _QUOTES[s[0] == tables.SINGLE].remove(s, strict)
 
 
-def quotes(s):
-    return QUOTES[s[0] == tables.SINGLE]
-
-
-def quoter(single_quote=False, ensure_ascii=False):
-    q = QUOTES[single_quote]
-    return functools.partial(q.add, ensure_ascii=ensure_ascii)
-
-
-QUOTES = tuple(Quote(t) for t in tables.QUOTES)
+_QUOTES = tuple(_Quote(t) for t in tables.QUOTES)

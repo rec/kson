@@ -1,5 +1,4 @@
 from . import quote  # noqa: F401
-from . quote import quoter   # noqa: F401
 
 
 def is_bin(s):

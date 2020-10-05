@@ -1,5 +1,5 @@
 from . visited import visited
-from .. import quote
+from .. quote import quote
 import functools
 import math
 
@@ -7,8 +7,11 @@ import math
 class Visitor:
     def __init__(self, options):
         self._check_circular = visited(options.check_circular)
-        self.quote = quote.quoter(options.single_quote, options.ensure_ascii)
+        self.quote = quote.Quote(options.single_quote).add
         self.options = options
+
+    def quote(self, s):
+        return self.quote.add(s, self.options.ensure_ascii)
 
     def visit(self, x):
         return _visit(x, self)
