@@ -5,7 +5,7 @@ source = kson
 
 [report]
 
-fail_under = 92
+fail_under = 95
 skip_covered = True
 
 omit =

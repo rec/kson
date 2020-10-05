@@ -11,16 +11,14 @@ def decoder(
 ):
     decoder = Decoder()
 
-    def object(*args):
-        args = dict(args)
-        if object_pairs_hook:
-            args = object_pairs_hook(args.items())
-        if object_hook:
-            args = object_hook(args)
-        return args
+    if object_pairs_hook:
+        decoder.object = lambda *a: object_pairs_hook(a)
 
-    if object_hook or object_pairs_hook:
-        decoder.object = object
+    elif object_hook:
+        def oh(*args):
+            return object_hook(dict(args))
+
+        decoder.object = oh
 
     if parse_float:
         decoder.floating = parse_float
@@ -87,4 +85,4 @@ def load(fp, **kwargs):
     Deserialize ``fp`` (a ``.read()``-supporting file-like object containing
     a KSON document) to a Python object.
     """
-    return loads(fp, **kwargs)
+    return loads(fp.read(), **kwargs)
