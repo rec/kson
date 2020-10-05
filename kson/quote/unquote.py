@@ -1,4 +1,4 @@
-from . import quotes
+from . import quote
 from json import JSONDecodeError
 
 UNICODE_MARKER = 'u'
@@ -6,7 +6,7 @@ UNICODE_MARKER = 'u'
 
 def unquote(s, strict=False):
     s = getattr(s, 'value', s)
-    q = quotes.quotes(s)
+    q = quote.quotes(s)
     chunks = []
     end = 1
 
