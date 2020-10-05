@@ -1,5 +1,4 @@
 from .. grammar import kson
-from .. import quote
 from .. quote import quote as _quote
 import base64
 import functools
@@ -72,25 +71,29 @@ class Decoder:
         return t
 
     def __call__(self, s):
-        return self._lark(_is_bytes(s)).parser.parse(s)
+        if _is_bin(s):
+            lark = self._lark(True)
+        elif not isinstance(s, str):
+            raise TypeError('Must be bytes, bytearray or str')
+        else:
+            lark = self._lark(False)
+
+        return lark.parser.parse(s)
 
 
 def _wrap(obj, name):
     method = getattr(obj, name)
-    encode = (lambda x: x) if name.endswith('bytes') else quote.encode
+
+    def encode(s):
+        return s.decode() if _is_bin(s) else s
+
+    enc = (lambda x: x) if name.endswith('bytes') else encode
 
     @functools.wraps(method)
     def wrapped(x):
-        return method(*[encode(getattr(i, 'value', i)) for i in x])
+        return method(*[enc(getattr(i, 'value', i)) for i in x])
 
     return wrapped
-
-
-def _is_bytes(s):
-    if quote.is_bin(s):
-        return True
-    if not isinstance(s, str):
-        raise TypeError('Must be bytes, bytearray or str')
 
 
 def _use_bytes(d):
@@ -102,6 +105,10 @@ def _use_bytes(d):
             r[k] = k == 'use_bytes' or _use_bytes(v)
         return r
     return d
+
+
+def _is_bin(s):
+    return isinstance(s, (bytearray, bytes))
 
 
 BINARY = _use_bytes(kson.DATA)

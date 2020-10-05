@@ -3,14 +3,14 @@ from json import JSONDecodeError
 UNICODE_MARKER = 'u'
 
 
-def unquote(q, s, strict=False):
+def unquote(quote, s, strict=False):
     chunks = []
     end = 1
 
     while end:
-        end = _unquote_once(q, s, chunks, strict, end)
+        end = _unquote_once(quote, s, chunks, strict, end)
 
-    return q.quote[:0].join(chunks)
+    return ''.join(chunks)
 
 
 def _unquote_once(quotes, s, chunks, strict, end):
