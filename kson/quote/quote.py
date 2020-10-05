@@ -1,4 +1,5 @@
 from . import tables
+from . unquote import unquote as _unquote
 import functools
 
 SHORT_ASCII = '\\u{0:04x}'
@@ -17,6 +18,9 @@ class Quote:
             re, replace = self.escape_re, self._replace_unicode
 
         return self.quote + re.sub(replace, s) + self.quote
+
+    def unquote(self, s, strict=False):
+        return _unquote(self, s, strict)
 
     def _replace_unicode(self, match):
         return self.escape_dict[match.group(0)]
@@ -37,6 +41,10 @@ class Quote:
         s1 = 0xD800 | ((n >> 10) & 0x3FF)
         s2 = 0xDC00 | (n & 0x3FF)
         return LONG_ASCII.format(s1, s2)
+
+
+def unquote(s, strict=True):
+    return QUOTES[s[0] == tables.SINGLE].unquote(s, strict)
 
 
 def quotes(s):

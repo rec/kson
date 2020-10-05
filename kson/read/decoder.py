@@ -1,5 +1,6 @@
+from .. grammar import kson
 from .. import quote
-from ..grammar import kson
+from .. quote import quote as _quote
 import base64
 import functools
 import math
@@ -22,7 +23,7 @@ class Decoder:
         return list(args)
 
     def string(self, s):
-        return quote.unquote(s)
+        return _quote.unquote(s)
 
     def abytes(self, s):
         return base64.b85decode(s[2:-1])
