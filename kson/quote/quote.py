@@ -1,29 +1,30 @@
 from . import tables
-from argparse import Namespace
 import functools
 
 SHORT_ASCII = '\\u{0:04x}'
 LONG_ASCII = '\\u{0:04x}\\u{1:04x}'
 
 
-def quotes(s):
-    assert isinstance(s, str)
-    return QUOTES[s[0] == tables.SINGLE]
+class Quote:
+    def __init__(self, table):
+        for k, v in table.items():
+            setattr(self, k, v)
 
+    def add(self, s, ensure_ascii=False):
+        if ensure_ascii:
+            re, replace = self.escape_ascii_re, self._replace_ascii
+        else:
+            re, replace = self.escape_re, self._replace_unicode
 
-def quoter(single_quote=False, ensure_ascii=False):
-    q = QUOTES[single_quote]
-    return functools.partial(quote, q, ensure_ascii=ensure_ascii)
+        return self.quote + re.sub(replace, s) + self.quote
 
+    def _replace_unicode(self, match):
+        return self.escape_dict[match.group(0)]
 
-def quote(q, s, ensure_ascii=False):
-    def replace_unicode(match):
-        return q.escape_dict[match.group(0)]
-
-    def replace_ascii(match):
+    def _replace_ascii(self, match):
         s = match.group(0)
         try:
-            return q.escape_dict[s]
+            return self.escape_dict[s]
         except KeyError:
             pass
 
@@ -37,12 +38,14 @@ def quote(q, s, ensure_ascii=False):
         s2 = 0xDC00 | (n & 0x3FF)
         return LONG_ASCII.format(s1, s2)
 
-    if ensure_ascii:
-        re, replace = q.escape_ascii_re, replace_ascii
-    else:
-        re, replace = q.escape_re, replace_unicode
 
-    return q.quote + re.sub(replace, s) + q.quote
+def quotes(s):
+    return QUOTES[s[0] == tables.SINGLE]
 
 
-QUOTES = tuple(Namespace(**t) for t in tables.QUOTES)
+def quoter(single_quote=False, ensure_ascii=False):
+    q = QUOTES[single_quote]
+    return functools.partial(q.add, ensure_ascii=ensure_ascii)
+
+
+QUOTES = tuple(Quote(t) for t in tables.QUOTES)
