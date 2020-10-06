@@ -1,9 +1,10 @@
+from .decoder import DECODER
 from .decoder import Decoder
 import functools
 
 
 @functools.lru_cache()
-def decoder(
+def _decoder(
     object_hook=None,
     parse_float=None,
     parse_int=None,
@@ -35,15 +36,7 @@ def decoder(
     return decoder
 
 
-def loads(
-    s,
-    *,
-    object_hook=None,
-    parse_float=None,
-    parse_int=None,
-    parse_constant=None,
-    object_pairs_hook=None
-):
+def loads(s, **kwargs):
     """
     Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance
     containing a KSON document) to a Python object.
@@ -74,10 +67,9 @@ def loads(
     This can be used to raise an exception if invalid JSON numbers
     are encountered.
     """
-    d = decoder(
-        object_hook, parse_float, parse_int, parse_constant, object_pairs_hook
-    )
-    return d(s)
+
+    decoder = _decoder(**kwargs) if kwargs else DECODER
+    return decoder(s)
 
 
 @functools.wraps(loads)
