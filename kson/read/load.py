@@ -2,6 +2,7 @@ from .decoder import Decoder
 import functools
 
 
+@functools.lru_cache()
 def decoder(
     object_hook=None,
     parse_float=None,

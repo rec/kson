@@ -175,7 +175,7 @@ class RoundTripTest(unittest.TestCase):
         d2 = time.time() - t
 
         ratio = d2 / d1
-        assert ratio > 300
+        assert ratio < 5
 
 
 EXPECTED = """\
