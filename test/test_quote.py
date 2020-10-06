@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from kson import quote
 import functools
 import unittest
@@ -46,6 +47,42 @@ class QuoteTest(unittest.TestCase):
         round_trip(single_ascii, '"', "'\"'")
         round_trip(double, '"', '"\\""')
         round_trip(double_ascii, '"', '"\\""')
+
+    def test_escape_error(self):
+        with self.assertRaises(JSONDecodeError) as m:
+            quote.unquote('"\\u17"')
+        expected = 'Invalid \\uXXXX escape: line 1 column 3 (char 2)'
+        assert m.exception.args[0] == expected
+
+    def test_escape_error2(self):
+        with self.assertRaises(JSONDecodeError) as m:
+            quote.unquote('"\\u17NO"')
+        expected = 'Invalid \\uXXXX escape: line 1 column 3 (char 2)'
+        assert m.exception.args[0] == expected
+
+    def test_escape_error3(self):
+        with self.assertRaises(JSONDecodeError) as m:
+            quote.unquote('"\\u17')
+        expected = 'Invalid \\uXXXX escape: line 1 column 3 (char 2)'
+        assert m.exception.args[0] == expected
+
+    def test_missing_quote(self):
+        for x in '"hello', "'hello":
+            with self.assertRaises(JSONDecodeError) as m:
+                quote.unquote(x)
+            expected = 'Unterminated string: line 1 column 2 (char 1)'
+            assert m.exception.args[0] == expected
+        with self.assertRaises(JSONDecodeError) as m:
+            quote.unquote("'hello\\'")
+        expected = 'Unterminated string: line 1 column 9 (char 8)'
+        assert m.exception.args[0] == expected
+
+    def test_bad_escape(self):
+        for x in '"\\z"', "'\\z'":
+            with self.assertRaises(JSONDecodeError) as m:
+                quote.unquote(x)
+            expected = "Invalid \\escape: 'z': line 1 column 3 (char 2)"
+            assert m.exception.args[0] == expected
 
     def test_backslashes(self):
         round_trip(single, '\n', "'\\n'")

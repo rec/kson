@@ -107,14 +107,14 @@ class RoundTripTest(unittest.TestCase):
         assert b == b'{"foo":b"ab"\x00\x01\x02\x03\x04\x05\x06\x07"ab"}'
         assert b_str == '{"foo": a"009C61O)~M"}'
 
-    def test_unicode_char_XXX(self):
+    def test_unicode_char(self):
         uni = chr(0x7F)
         k = kson.dumps(uni, ensure_ascii=True)
         j = json.dumps(uni, ensure_ascii=True)
         print('one', repr(j), repr(k))
         assert j == k
 
-    def test_unicode_char(self):
+    def test_unicode_char2(self):
         uni = chr(0x7E)
 
         k = kson.dumps(uni)
@@ -134,25 +134,26 @@ class RoundTripTest(unittest.TestCase):
         j = json.dumps(uni, ensure_ascii=True)
         assert j == k
 
-    def NO_test_unicode_chars(self):
-        for i in range(256):
-            uni = chr(i)
-            u = kson.dumps(uni)
-            u_ascii = kson.dumps(uni, ensure_ascii=True)
-            u_no_ascii = kson.dumps(uni, ensure_ascii=False)
+    def test_unicode_chars(self):
+        def test_uni(center, radius=0x20):
+            for i in range(center - radius, center + radius):
+                uni = chr(i)
+                u = kson.dumps(uni)
+                u_ascii = kson.dumps(uni, ensure_ascii=True)
+                u_no_ascii = kson.dumps(uni, ensure_ascii=False)
 
-            assert u == u_no_ascii
-            assert u_ascii == json.dumps(uni, ensure_ascii=True)
-            assert u_no_ascii == json.dumps(uni, ensure_ascii=False)
+                assert u == u_no_ascii
+                assert u_ascii == json.dumps(uni, ensure_ascii=True)
+                assert u_no_ascii == json.dumps(uni, ensure_ascii=False)
 
-            import time
-            t = time.time()
-            assert uni == json.loads(u)
-            print('!!!', time.time() - t, u)
-            assert uni == kson.loads(u)
-            print('!!!', time.time() - t, u)
-            assert uni == kson.loads(u_ascii)
-            assert uni == kson.loads(u_no_ascii)
+                assert uni == json.loads(u)
+                assert uni == kson.loads(u_ascii)
+                assert uni == kson.loads(u_no_ascii)
+
+        test_uni(0x100)
+        test_uni(0xD800)
+        test_uni(0xDC00)
+        test_uni(0xF000)
 
     def test_unicode_bench(self):
         count = 64
