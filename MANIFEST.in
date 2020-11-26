@@ -1,6 +1,7 @@
 include .coveragerc
 include CHANGELOG
 include LICENSE
+include README.rst
 include requirements.txt
 include tox.ini
 recursive-exclude bin *
