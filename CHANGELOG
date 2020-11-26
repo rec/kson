@@ -1,3 +1,9 @@
+## v0.8.2 - 20/11/26
+
+* Mark as Beta
+* Add README.rst to MANIFEST.in
+* Added pyproject.toml
+
 ## v0.8.1 - 20/10/08
 
 * First release version
